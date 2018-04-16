@@ -1,11 +1,12 @@
 Block-ID        Block-Art		Mining-Level
 0               air			0
-1               dirt			1
+1               dirt			21
 2               stone			3
-3               wood			2
+3               wood			22
 4               iron-ore		3
-6               copper-ore		3
+5               copper-ore		3
+6		silver-ore		3
 7               gold-ore		3
 8               diamond			10
-9
-10
+9		leaves			23
+10		water			24
