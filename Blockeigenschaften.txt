@@ -9,4 +9,4 @@ Block-ID        Block-Art		Mining-Level
 7               gold-ore		3
 8               diamond			10
 9		leaves			23
-10
+10		water			24
