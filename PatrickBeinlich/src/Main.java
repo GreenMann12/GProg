@@ -5,7 +5,7 @@ public class Main {
 
         for (int y = 0; y < World.heigth; y++){
             for (int x = 0; x < World.width; x++){
-                System.out.print(world.world[x][y] + " ");
+                System.out.print(world.map[x][y] + " ");
             }
             System.out.print("\n");
         }
