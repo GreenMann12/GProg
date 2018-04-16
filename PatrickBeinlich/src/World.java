@@ -7,20 +7,31 @@ public class World {
     public int[][] map = new int[width][heigth];
 
     public void generateWorld() {
-        int hoverground = 150;
+        int air = 70;
+        int ground = 5;
+        int acth = 70;
         int numberTrees = 100;
         int numberiron = 50;
         int numbercopper = 30;
         int numbersilver = 20;
         int numbergold = 10;
+        int numberwater = 5;
 
         Random random = new Random();
 
         for (int x = 0; x < width; x++) {
+            int upordown = random.nextInt(5);
+
+            if (upordown == 0 && acth < (air +  40) ){
+                acth++;
+            } else if (upordown == 4 && acth > (air - 40)){
+                acth--;
+            }
+
             for (int y = 0; y < heigth; y++) {
-                if (y < hoverground) {
+                if (y < acth){
                     map[x][y] = 0;
-                } else if (y < hoverground + 10) {
+                } else if (y < acth+ground) {
                     map[x][y] = 1;
                 } else {
                     map[x][y] = 2;
@@ -28,8 +39,35 @@ public class World {
             }
         }
 
+        //<editor-fold desc="Water">
+        while (numberwater != 0){
+            int x = random.nextInt(width-10)+5;
+            int y = 0;
+
+            while (y < heigth && map[x][y] != 1) {
+                y++;
+            }
+
+            if (y != width && y < air){
+                numberwater--;
+
+                map[x][y]=10;
+
+
+
+
+
+
+
+
+
+
+            }
+        }
+        //</editor-fold>
+
         //<editor-fold desc="Trees">
-        for (int count = 0; count < numberTrees; count++) {
+        while (numberTrees != 0){
             int x = random.nextInt(width - 10) + 5;
             int y = 0;
 
@@ -61,79 +99,30 @@ public class World {
 
                     map[x][y - 8] = 9;
 
+                    numberTrees--;
                     break;
                 }
             }
         }
         //</editor-fold>
 
-        //<editor-fold desc="Iron Ore">
-        for (int count = 0; count < numberiron; count++) {
-            int oreid = 4;
+        // place iron ore
+        placeOre(numberiron, 4);
 
-            int x = random.nextInt(width - 10) + 5;
-            int y = 0;
+        // place copper ore
+        placeOre(numbercopper, 5);
 
-            while (y < heigth && map[x][y] != 2) {
-                y++;
-            }
+        // place silver ore
+        placeOre(numbersilver, 6);
 
+        // place gold ore
+        placeOre(numbergold, 7);
+    }
 
-            if (y != heigth) {
-                y = random.nextInt(heigth - (y + 10)) + y;
+    private void placeOre(int number, int oreid){
+        Random random = new Random();
 
-                map[x][y] = oreid;
-
-                int exp = 5;
-
-
-                int r = random.nextInt(exp);
-                for (int c = 0; c < r; c++) {
-                    map[x + c][y] = oreid;
-                }
-
-                r = random.nextInt(exp);
-                for (int c = 0; c < r; c++) {
-                    map[x - c][y] = oreid;
-                }
-
-                r = random.nextInt(exp);
-                for (int c = 0; c < r; c++) {
-                    map[x][y + c] = oreid;
-                }
-
-                r = random.nextInt(exp);
-                for (int c = 0; c < r; c++) {
-                    map[x][y - c] = oreid;
-                }
-
-
-                // check if the diagonales should be ore too
-
-                //SE
-                if (map[x + 2][y] == oreid && map[x][y + 2] == oreid) {
-                    map[x + 1][y + 1] = oreid;
-                }
-                //SW
-                if (map[x - 2][y] == oreid && map[x][y + 2] == oreid) {
-                    map[x - 1][y + 1] = oreid;
-                }
-                //NW
-                if (map[x - 2][y] == oreid && map[x][y - 2] == oreid) {
-                    map[x - 1][y - 1] = oreid;
-                }
-                //NE
-                if (map[x + 2][y] == oreid && map[x][y - 2] == oreid) {
-                    map[x + 1][y - 1] = oreid;
-                }
-            }
-        }
-        //</editor-fold>
-
-        //<editor-fold desc="Copper Ore">
-        for (int count = 0; count < numbercopper; count++) {
-            int oreid = 5;
-
+        for (int count = 0; count < number; count++) {
             int x = random.nextInt(width - 10) + 5;
             int y = 0;
 
@@ -190,135 +179,5 @@ public class World {
                 }
             }
         }
-        //</editor-fold>
-
-        //<editor-fold desc="Silver Ore">
-        for (int count = 0; count < numbersilver; count++) {
-            int oreid = 6;
-
-            int x = random.nextInt(width - 10) + 5;
-            int y = 0;
-
-            while (y < heigth && map[x][y] != 2) {
-                y++;
-            }
-
-
-            if (y != heigth) {
-                y = random.nextInt(heigth - (y + 10)) + y;
-
-                map[x][y] = oreid;
-
-                int exp = 5;
-
-
-                int r = random.nextInt(exp);
-                for (int c = 0; c < r; c++) {
-                    map[x + c][y] = oreid;
-                }
-
-                r = random.nextInt(exp);
-                for (int c = 0; c < r; c++) {
-                    map[x - c][y] = oreid;
-                }
-
-                r = random.nextInt(exp);
-                for (int c = 0; c < r; c++) {
-                    map[x][y + c] = oreid;
-                }
-
-                r = random.nextInt(exp);
-                for (int c = 0; c < r; c++) {
-                    map[x][y - c] = oreid;
-                }
-
-
-                // check if the diagonales should be ore too
-                //SE
-                if (map[x + 2][y] == oreid && map[x][y + 2] == oreid) {
-                    map[x + 1][y + 1] = oreid;
-                }
-                //SW
-                if (map[x - 2][y] == oreid && map[x][y + 2] == oreid) {
-                    map[x - 1][y + 1] = oreid;
-                }
-                //NW
-                if (map[x - 2][y] == oreid && map[x][y - 2] == oreid) {
-                    map[x - 1][y - 1] = oreid;
-                }
-                //NE
-                if (map[x + 2][y] == oreid && map[x][y - 2] == oreid) {
-                    map[x + 1][y - 1] = oreid;
-                }
-            }
-        }
-        //</editor-fold>
-
-        //<editor-fold desc="Gold Ore">
-        for (int count = 0; count < numbergold; count++) {
-            int oreid = 7;
-
-            int x = random.nextInt(width - 10) + 5;
-            int y = 0;
-
-            while (y < heigth && map[x][y] != 2) {
-                y++;
-            }
-
-
-            if (y != heigth) {
-                y = random.nextInt(heigth - (y + 10)) + y;
-
-                map[x][y] = oreid;
-
-                int exp = 5;
-
-
-                int r = random.nextInt(exp);
-                for (int c = 0; c < r; c++) {
-                    map[x + c][y] = oreid;
-                }
-
-                r = random.nextInt(exp);
-                for (int c = 0; c < r; c++) {
-                    map[x - c][y] = oreid;
-                }
-
-                r = random.nextInt(exp);
-                for (int c = 0; c < r; c++) {
-                    map[x][y + c] = oreid;
-                }
-
-                r = random.nextInt(exp);
-                for (int c = 0; c < r; c++) {
-                    map[x][y - c] = oreid;
-                }
-
-
-                // check if the diagonales should be ore too
-                //SE
-                if (map[x + 2][y] == oreid && map[x][y + 2] == oreid) {
-                    map[x + 1][y + 1] = oreid;
-                }
-                //SW
-                if (map[x - 2][y] == oreid && map[x][y + 2] == oreid) {
-                    map[x - 1][y + 1] = oreid;
-                }
-                //NW
-                if (map[x - 2][y] == oreid && map[x][y - 2] == oreid) {
-                    map[x - 1][y - 1] = oreid;
-                }
-                //NE
-                if (map[x + 2][y] == oreid && map[x][y - 2] == oreid) {
-                    map[x + 1][y - 1] = oreid;
-                }
-            }
-        }
-        //</editor-fold>
     }
 }
-
-
-
-
-
