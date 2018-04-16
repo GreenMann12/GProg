@@ -15,7 +15,7 @@ public class World {
         int numbercopper = 30;
         int numbersilver = 20;
         int numbergold = 10;
-        int numberwater = 5;
+        int numberwater = 20;
 
         Random random = new Random();
 
@@ -44,25 +44,13 @@ public class World {
             int x = random.nextInt(width-10)+5;
             int y = 0;
 
-            while (y < heigth && map[x][y] != 1) {
+            while (y < heigth && map[x][y] == 0) {
                 y++;
             }
 
-            if (y != width && y < air){
-                numberwater--;
+            map[x][y] = 10;
 
-                map[x][y]=10;
-
-
-
-
-
-
-
-
-
-
-            }
+            numberwater--;
         }
         //</editor-fold>
 
