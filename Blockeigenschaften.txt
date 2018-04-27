@@ -10,3 +10,4 @@ Block-ID        Block-Art		Mining-Level
 8               diamond			10
 9		leaves			23
 10		water			24
+11		sand			21
