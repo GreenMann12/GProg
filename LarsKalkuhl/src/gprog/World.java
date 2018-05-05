@@ -2,10 +2,16 @@ package gprog;
 
 import java.util.Random;
 
+import javafx.event.EventHandler;
+import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class World{
@@ -14,42 +20,91 @@ public class World{
 	
 	public static int heigth = 255;
 	public static int width = 1000;
+	int x = 0;
+	int y = 40;
 	
 	public int[][] map = new int[width][heigth];
+	public Character hero = new Character();
+	public Monster[] monster;
 	
 	public World(Stage stage){
+		loading(stage);
 		generateWorld();
 		showWorld(stage);
+	}
+	
+	public void loading(Stage stage){
+		VBox vb = new VBox();
+		ImageView iview = new ImageView();
+		iview.setImage(draw.loadLoading(800, 600));
+		vb.getChildren().add(iview);
+		Scene scene = new Scene(vb, 800, 600);
+		stage.setScene(scene);
 	}
 	
 	public void showWorld(Stage stage){
 		
 		Group group = new Group();
-		Canvas canvas = new Canvas((width*15),(heigth*15));
+		Canvas canvas = new Canvas((800),(600));
 		group.getChildren().add(canvas);
 		
 		Scene scene = new Scene(group, 800, 600);
 		
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		
-		MyAnimTimer animTimer = new MyAnimTimer(20) {
+		MyAnimTimer animTimer = new MyAnimTimer(20, x, y) {
 			
 			@Override
 			public void handle() {
-				int x = 0;
-				int y = 0;
-				for (int w = 0; w < width; w++) {
-					x = 0;
-					for (int h = 40; h < heigth; h++) {
-						gc.drawImage(draw.loadBlockTexture(map[w][h]), y, x);
-						x += 20;
+				int koordX = 0;
+				int koordY = 0;
+				int xChar = 0;
+				int yChar = 0;
+				boolean charIsDraw = false;
+				for (int w = x; w < width; w++) {
+					koordX = 0;
+					for (int h = y; h < heigth; h++) {
+						gc.drawImage(draw.loadBlockTexture(map[w][h]), koordY, koordX);
+						if (charIsDraw == false && map[w][h] == 1) {
+							xChar = koordX-50;
+							yChar = koordY;
+							charIsDraw = true;
+						}
+						koordX += 15;
 					}
-					y += 20;
+					koordY += 15;
 				}
+				gc.drawImage(draw.loadCharTexture(0), yChar, xChar);
 			}
 		};
 		
 		animTimer.start();
+		
+		scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+			@Override
+            public void handle(KeyEvent event) {
+                if(event.getCode().toString().equals("W")){
+                }
+                if(event.getCode().toString().equals("A")){
+                	if (x > 0) {
+                		x = x-1;
+					}
+                	animTimer.setXandY(x, y);
+                }
+                if(event.getCode().toString().equals("S")){
+                	if (x > 0) {
+                		y = y+1;
+					}
+                	animTimer.setXandY(x, y);
+                }
+                if(event.getCode().toString().equals("D")){
+                	if (x < width) {
+                		x = x+1;
+					}
+                	animTimer.setXandY(x, y);
+                }
+            }
+		});
 		
 		stage.setScene(scene);
 	}
