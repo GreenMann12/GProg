@@ -1,23 +1,11 @@
 Aufbau eines Seeds:
-
-
-Möglichkeit 1: (Weniger größere Biome)
-	... 876 543 210
-
-	- Immer drei Ziffern gehören zu einem Biom (z.B. 210, 543, 876).
-	- Es sind maximal 6 Biome möglich (da der seed ein long ist nur maximal 6 dreierblöcke möglich).
-	- Die ersten zwei Ziffern * 100 geben die größe des Bioms an (z.B. 10 = 1000, 01 = 100, 43 = 4300)
-	- Die dritte Ziffer eines Blockes gibt die Art des Biomes an.
-
-Möglichkeit 2: (Mehr kleinere Biome)
 	... 98 76 54 32 10
 
 	- Immer zwei Ziffern gehören zu einem Biom (z.B. 10, 32, 54).
-	- Es sind maximal 9 Biome möglich (da der seed ein long ist nur maximal 9 zweierblöcke möglich).
 	- Die ersten Ziffer * 100 gibt die größe des Bioms an (z.B. 0 = 0, 2 = 200, 8 = 800)
+	- Es wird ein String als Speichertyp für den Seed gewählt, es können also beliebig viele Biome verwendet werden
 	- Die zweite Ziffer eines Blockes gibt die Art des Biomes an.
 
-Welche Seed-Version verwendet wird muss noch diskutiert werden.
 
 Biom-ID: 
 - 0: Wasser
