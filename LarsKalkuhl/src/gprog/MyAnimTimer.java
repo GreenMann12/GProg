@@ -8,16 +8,9 @@ import javafx.animation.AnimationTimer;
 public abstract class MyAnimTimer extends AnimationTimer {
     private long sleepNs=0;
     long prevTime =0;
-    int x,y;
-    public MyAnimTimer(long sleepMs, int x, int y){
+    
+    public MyAnimTimer(long sleepMs){
         this.sleepNs=sleepMs*1_000_000;
-        this.x = x;
-        this.y = y;
-    }
-
-    public void setXandY(int x, int y){
-    	this.x = x;
-    	this.y = y;
     }
     
     @Override

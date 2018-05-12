@@ -30,8 +30,8 @@ public class TitleScreen extends Application{
 		Label l_gameName = new Label("NameEinesGames");
 		l_gameName.setStyle("-fx-font: 36 arial;");
 		borderPane.setTop(l_gameName);
-		borderPane.setAlignment(l_gameName, Pos.CENTER);
-		borderPane.setMargin(l_gameName, new Insets(50,10,10,0));
+		BorderPane.setAlignment(l_gameName, Pos.CENTER);
+		BorderPane.setMargin(l_gameName, new Insets(50,10,10,0));
 		
 		VBox vbox = new VBox();
 		Button b_startGame = new Button("Neues Spiel");
@@ -48,10 +48,10 @@ public class TitleScreen extends Application{
 		b_exit.setStyle("-fx-font: 24 arial;");
 		vbox.getChildren().addAll(b_startGame, b_loadGame, b_options, b_exit);
 		vbox.setAlignment(Pos.CENTER);
-		vbox.setMargin(b_startGame, new Insets(0,10,10,10));
-		vbox.setMargin(b_loadGame, new Insets(0,10,10,10));
-		vbox.setMargin(b_options, new Insets(0,10,10,10));
-		vbox.setMargin(b_exit, new Insets(0,10,10,0));
+		VBox.setMargin(b_startGame, new Insets(0,10,10,10));
+		VBox.setMargin(b_loadGame, new Insets(0,10,10,10));
+		VBox.setMargin(b_options, new Insets(0,10,10,10));
+		VBox.setMargin(b_exit, new Insets(0,10,10,0));
 		borderPane.setCenter(vbox);
 		
 		//EventHandler
