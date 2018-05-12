@@ -14,7 +14,6 @@ public class GenerateWorld {
     int acth = 100;
     int ground = 5;
 
-    //int numberTrees = 100;
     int numberiron = 50;
     int numbercopper = 30;
     int numbersilver = 20;
@@ -43,6 +42,9 @@ public class GenerateWorld {
 
         // place gold ore
         placeOre(numbergold, 7);
+
+        // place Trees
+        placeRandomlyTrees();
 
         return map;
     }
@@ -99,15 +101,14 @@ public class GenerateWorld {
 
             end = start + bioms.get(i).size;
 
-            if (prevbiom != curbiom && !(curbiom == 3 || curbiom == 4)){
-                border = transition(start);
-            }
-
             if (curbiom == 0) {
+                border = transition(start, waterlevel + 20);
                 createOcean(border, end);
             } else if (curbiom == 1) {
+                border = transition(start, waterlevel - 15);
                 createFlatland(border, end);
             } else if (curbiom == 2) {
+                border = transition(start, waterlevel - 30);
                 createHills(border, end);
             } else if (curbiom == 3) {
                 border = transitionMountains(start, prevbiom);
@@ -116,6 +117,7 @@ public class GenerateWorld {
                 border = transitionDesert(start, prevbiom);
                 createDesert(border, end);
             } else {
+                border = transition(start, waterlevel - 20);
                 createStandardLandscape(border, end);
             }
 
@@ -129,7 +131,6 @@ public class GenerateWorld {
         numbersilver = width / 50;
         numbergold = width / 100;
     }
-
 
 
     private void createOcean(int start, int end) {
@@ -164,9 +165,9 @@ public class GenerateWorld {
 
             if (upordown == 0 && acth < (groundlevel + 20)) {
                 acth += 2;
-            } else if (upordown == 1 && acth < groundlevel + 20){
+            } else if (upordown == 1 && acth < groundlevel + 20) {
                 acth++;
-            } else if (upordown == 3 && acth < groundlevel - 20){
+            } else if (upordown == 3 && acth < groundlevel - 20) {
                 acth--;
             } else if (upordown == 4 && acth > (groundlevel - 20)) {
                 acth -= 2;
@@ -201,7 +202,7 @@ public class GenerateWorld {
     }
 
     private void createDesert(int start, int end) {
-        int groundlevel = waterlevel - 10;
+        int groundlevel = waterlevel - 20;
         int sandheigth = 10;
 
         for (int x = start; x < end; x++) {
@@ -228,16 +229,14 @@ public class GenerateWorld {
     }
 
 
-
-    private int transition(int start){
-        int targeth = waterlevel + 20;
-        if (start == 0){
+    private int transition(int start, int targeth ) {
+        if (start == 0) {
             acth = targeth;
         } else {
-            if (acth > targeth){
-                while (acth > targeth){
-                    if ((acth - targeth) > 10){
-                        acth -=2;
+            if (acth > targeth) {
+                while (acth > targeth) {
+                    if ((acth - targeth) > 10) {
+                        acth -= 2;
                     } else {
                         acth--;
                     }
@@ -245,10 +244,10 @@ public class GenerateWorld {
                     fillStandard(start);
                     start++;
                 }
-            } else if (acth < targeth){
-                while (acth < targeth){
-                    if ((targeth - acth) > 10){
-                        acth +=2;
+            } else if (acth < targeth) {
+                while (acth < targeth) {
+                    if ((targeth - acth) > 10) {
+                        acth += 2;
                     } else {
                         acth++;
                     }
@@ -278,17 +277,17 @@ public class GenerateWorld {
         return start;
     }
 
-    private int transitionDesert(int start, int id){
-        int targeth = waterlevel - 10;
+    private int transitionDesert(int start, int id) {
+        int targeth = waterlevel - 20;
         int sandheight = 0;
 
-        if (start == 0){
-            start = targeth;
-        } else if (id != 4){
-            if (acth > targeth){
-                while (acth > targeth){
-                    if ((acth - targeth) > 10){
-                        acth -=2;
+        if (start == 0) {
+            acth = targeth;
+        } else if (id != 4) {
+            if (acth > targeth) {
+                while (acth > targeth) {
+                    if ((acth - targeth) > 10) {
+                        acth -= 2;
                         sandheight = 5;
                     } else {
                         sandheight = 10;
@@ -298,10 +297,10 @@ public class GenerateWorld {
                     fillDesert(start, sandheight);
                     start++;
                 }
-            } else if (acth < targeth){
-                while (acth < targeth){
-                    if ((targeth - acth) > 10){
-                        acth +=2;
+            } else if (acth < targeth) {
+                while (acth < targeth) {
+                    if ((targeth - acth) > 10) {
+                        acth += 2;
                         sandheight = 5;
                     } else {
                         sandheight = 10;
@@ -313,10 +312,33 @@ public class GenerateWorld {
                 }
             }
         }
+
         return start;
     }
 
 
+    private void placeRandomlyTrees() {
+        int start = 0;
+        int end = 0;
+        int number = 0;
+        for (Biom b : bioms) {
+            if (b.biomID == 1 || b.biomID == 2) {
+                end = start + b.size;
+                int probability = random.nextInt(5);
+
+                number = 0;
+
+                if (probability == 0) {                                                                                  // a few trees in the biom
+                    number = (b.size / 100) * 5;
+                } else if (probability == 1 || probability == 2) {                                                       // a few trees in the biom
+                    number = (b.size / 100) * 30;
+                }
+
+                placeTrees(start, end, number);
+            }
+            start += b.size;
+        }
+    }
 
     private void placeWater(int start, int end, int number) {
         while (number != 0) {
@@ -334,6 +356,9 @@ public class GenerateWorld {
     }
 
     private void placeTrees(int start, int end, int number) {
+        start += 5;
+        end -= 5;
+
         while (number != 0) {
             int x = newRandom(start, end);
             int y = 0;
@@ -452,14 +477,27 @@ public class GenerateWorld {
     }
 
 
-
-    private void fillStandard(int x){
-        for (int y = 0; y < heigth; y++){
-            if (y > acth + ground || (y > acth && y < 60)){
+    private void fillStandard(int x) {
+        for (int y = 0; y < heigth; y++) {
+            if (y > acth + ground || (y > acth && y < 60)) {
                 map[x][y] = 2;
             } else if (y > acth && acth < waterlevel) {
                 map[x][y] = 1;
             } else if (y > acth && acth >= waterlevel) {
+                map[x][y] = 11;
+            } else if (y > waterlevel) {
+                map[x][y] = 10;
+            } else {
+                map[x][y] = 0;
+            }
+        }
+    }
+
+    private void fillDesert(int x, int sandheigth) {
+        for (int y = 0; y < heigth; y++) {
+            if (y > acth + sandheigth){
+                map[x][y] = 2;
+            } else if (y > acth){
                 map[x][y] = 11;
             } else if (y > waterlevel){
                 map[x][y] = 10;
@@ -468,23 +506,6 @@ public class GenerateWorld {
             }
         }
     }
-
-    private void fillDesert(int x, int sandheigth){
-        for (int y = 0; y < heigth; y++) {
-            if (y < acth && y <= waterlevel) {
-                map[x][y] = 0;
-            } else if (y < acth) {
-                map[x][y] = 10;
-            } else if (y < acth + sandheigth && y > 65) {
-                map[x][y] = 11;
-            } else if (y < acth + sandheigth){
-                map[x][y] = 1;
-            } else {
-                map[x][y] = 2;
-            }
-        }
-    }
-
 
 
     private int parseCharToInt(char c) {
