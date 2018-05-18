@@ -10,10 +10,16 @@ public class Inventory {
 				inventory[i][j] = 0;
 			}
 		}
+		inventory[0][0] = 12;
+		inventory[0][1] = 1;
 	}
 	
 	public int[][] getInventory(){
 		return inventory;
+	}
+	
+	public void setInventory(int[][] inventory){
+		this.inventory = inventory;
 	}
 	
 	public void addItem(int id){
