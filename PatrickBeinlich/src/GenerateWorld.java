@@ -1,4 +1,3 @@
-import java.net.Inet4Address;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -18,6 +17,7 @@ public class GenerateWorld {
     int numbercopper = 30;
     int numbersilver = 20;
     int numbergold = 10;
+    int numberdiamond = 10;
 
 
     public int[][] createWorld(String seed, int pheight) {
@@ -43,6 +43,8 @@ public class GenerateWorld {
         // place gold ore
         placeOre(numbergold, 7);
 
+        placeOre(numberdiamond, 8);
+
         // place Trees
         placeRandomlyTrees();
 
@@ -53,8 +55,8 @@ public class GenerateWorld {
         ArrayList<Integer> digits = new ArrayList<>();
         int size = 0;
 
-        if (seed.length() < 2) {
-            seed = Integer.toString(newRandom(1000, Integer.MAX_VALUE));
+        if (seed.length() < 2){
+            seed = randomString();
         }
 
         char[] cseed = seed.toCharArray();
@@ -70,10 +72,13 @@ public class GenerateWorld {
             digits.add(i);
         }
 
-        if (digits.size() < 2) {
-            bioms.add(new Biom(1, 600));
-            size = 600;
+        if (!checkworldsize(digits)) {
+            bioms.add(new Biom(1, 200));
+            bioms.add(new Biom(2, 200));
+            bioms.add(new Biom(3, 200));
+            bioms.add(new Biom(4, 200));
 
+            size = 800;
         } else {
             for (int a = 1; a < digits.size(); a = a + 2) {
                 int bsize = digits.get(a - 1) * 100;
@@ -126,11 +131,13 @@ public class GenerateWorld {
     }
 
     private void calculateResourceNumbers() {
-        numberiron = width / 20;
-        numbercopper = width / 28;
-        numbersilver = width / 50;
-        numbergold = width / 100;
+        numberiron = width / 15;
+        numbercopper = width / 25;
+        numbersilver = width / 40;
+        numbergold = width / 70;
+        numberdiamond = width / 100;
     }
+
 
 
     private void createOcean(int start, int end) {
@@ -229,16 +236,29 @@ public class GenerateWorld {
     }
 
 
+
     private int transition(int start, int targeth ) {
+        int starth = acth;
+
         if (start == 0) {
             acth = targeth;
         } else {
             if (acth > targeth) {
                 while (acth > targeth) {
-                    if ((acth - targeth) > 10) {
-                        acth -= 2;
-                    } else {
+                    if (Math.abs(starth - acth)<=2){
+                        if (start % 2 == 0) {
+                            acth--;
+                        }
+                    } else if (Math.abs(acth - targeth)<=2){
+                        if (start % 2 == 0){
+                            acth--;
+                        }
+                    } else if (Math.abs(starth - acth)<=5){
                         acth--;
+                    } else if (Math.abs(acth - targeth) <=5){
+                        acth--;
+                    } else {
+                        acth -= 2;
                     }
 
                     fillStandard(start);
@@ -246,10 +266,20 @@ public class GenerateWorld {
                 }
             } else if (acth < targeth) {
                 while (acth < targeth) {
-                    if ((targeth - acth) > 10) {
-                        acth += 2;
-                    } else {
+                    if (Math.abs(starth - acth)<=2){
+                        if (start % 2 == 0) {
+                            acth++;
+                        }
+                    } else if (Math.abs(acth - targeth)<=2){
+                        if (start % 2 == 0){
+                            acth++;
+                        }
+                    } else if (Math.abs(starth - acth)<=5){
                         acth++;
+                    } else if (Math.abs(acth - targeth) <=5){
+                        acth++;
+                    } else {
+                        acth += 2;
                     }
 
                     fillStandard(start);
@@ -280,18 +310,32 @@ public class GenerateWorld {
     private int transitionDesert(int start, int id) {
         int targeth = waterlevel - 20;
         int sandheight = 0;
+        int starth = acth;
 
         if (start == 0) {
             acth = targeth;
         } else if (id != 4) {
             if (acth > targeth) {
                 while (acth > targeth) {
-                    if ((acth - targeth) > 10) {
-                        acth -= 2;
-                        sandheight = 5;
-                    } else {
-                        sandheight = 10;
+                    if (Math.abs(starth - acth)<=2){
+                        sandheight = 2;
+                        if (start % 2 == 0) {
+                            acth--;
+                        }
+                    } else if (Math.abs(acth - targeth)<=2){
+                        sandheight = 9;
+                        if (start % 2 == 0){
+                            acth--;
+                        }
+                    } else if (Math.abs(starth - acth)<=5){
+                        sandheight = 4;
                         acth--;
+                    } else if (Math.abs(acth - targeth) <=5){
+                        sandheight = 8;
+                        acth--;
+                    } else {
+                        sandheight = 6;
+                        acth -= 2;
                     }
 
                     fillDesert(start, sandheight);
@@ -299,12 +343,25 @@ public class GenerateWorld {
                 }
             } else if (acth < targeth) {
                 while (acth < targeth) {
-                    if ((targeth - acth) > 10) {
-                        acth += 2;
-                        sandheight = 5;
-                    } else {
-                        sandheight = 10;
+                    if (Math.abs(starth - acth)<=2){
+                        sandheight = 2;
+                        if (start % 2 == 0) {
+                            acth++;
+                        }
+                    } else if (Math.abs(acth - targeth)<=2){
+                        sandheight = 9;
+                        if (start % 2 == 0){
+                            acth++;
+                        }
+                    } else if (Math.abs(starth - acth)<=5){
+                        sandheight = 4;
                         acth++;
+                    } else if (Math.abs(acth - targeth) <=5){
+                        sandheight = 8;
+                        acth++;
+                    } else {
+                        sandheight = 6;
+                        acth += 2;
                     }
 
                     fillDesert(start, sandheight);
@@ -315,6 +372,7 @@ public class GenerateWorld {
 
         return start;
     }
+
 
 
     private void placeRandomlyTrees() {
@@ -329,29 +387,14 @@ public class GenerateWorld {
                 number = 0;
 
                 if (probability == 0) {                                                                                  // a few trees in the biom
-                    number = (b.size / 100) * 5;
+                    number = b.size * 25 / 100;
                 } else if (probability == 1 || probability == 2) {                                                       // a few trees in the biom
-                    number = (b.size / 100) * 30;
+                    number = b.size * 3 / 100;
                 }
 
                 placeTrees(start, end, number);
             }
             start += b.size;
-        }
-    }
-
-    private void placeWater(int start, int end, int number) {
-        while (number != 0) {
-            int x = newRandom(start, end);
-            int y = 0;
-
-            while (y < heigth && map[x][y] == 0) {
-                y++;
-            }
-
-            map[x][y] = 10;
-
-            number--;
         }
     }
 
@@ -395,6 +438,21 @@ public class GenerateWorld {
                     break;
                 }
             }
+        }
+    }
+
+    private void placeWater(int start, int end, int number) {
+        while (number != 0) {
+            int x = newRandom(start, end);
+            int y = 0;
+
+            while (y < heigth && map[x][y] == 0) {
+                y++;
+            }
+
+            map[x][y] = 10;
+
+            number--;
         }
     }
 
@@ -477,6 +535,7 @@ public class GenerateWorld {
     }
 
 
+
     private void fillStandard(int x) {
         for (int y = 0; y < heigth; y++) {
             if (y > acth + ground || (y > acth && y < 60)) {
@@ -507,6 +566,30 @@ public class GenerateWorld {
         }
     }
 
+
+
+    private boolean checkworldsize(ArrayList<Integer> seed){
+        int size = 0;
+        for (int i = 0; i < seed.size(); i += 2){
+            size += seed.get(i);
+        }
+
+        if (size >= 4){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private String randomString() {
+        final int STRING_LENGTH = 4;
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < STRING_LENGTH; i++)
+        {
+            sb.append((char)((int)(Math.random()*26)+97));
+        }
+        return sb.toString();
+    }
 
     private int parseCharToInt(char c) {
         try {
