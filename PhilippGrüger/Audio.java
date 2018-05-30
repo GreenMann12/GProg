@@ -11,6 +11,7 @@ import java.io.File;
  * Created by PG-Project on 12.05.2018.
  */
 public class Audio {
+    private static Clip clip;
 
      public static void music(String track)
     {
@@ -39,17 +40,29 @@ public class Audio {
             while (true)
 
             { try {
-                Clip clip = AudioSystem.getClip();
+                clip = AudioSystem.getClip();
                 AudioInputStream inputstream = AudioSystem.getAudioInputStream(new File(trackname));
                 clip.open(inputstream);
-                clip.loop(1);
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
                 Thread.sleep(clip.getMicrosecondLength());
             }catch (Exception e) {
             e.printStackTrace();
-        }
+            }
         }
         }
         }).start();
+
+    }
+    public static void stopPlay(String track)
+    {
+        try {
+            if (clip != null) {
+                clip.stop();
+                clip.close();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
 
     }
 
