@@ -17,4 +17,9 @@ public class Campfire extends Construct {
         this.setItems(items);
     }
 
+    @Override
+    public Construct clone () {
+        return new Campfire();
+    }
+
 }

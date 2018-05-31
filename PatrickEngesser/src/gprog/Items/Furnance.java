@@ -21,4 +21,9 @@ public class Furnance extends Construct {
         this.setItems(items);
     }
 
+    @Override
+    public Construct clone () {
+        return new Furnance();
+    }
+
 }

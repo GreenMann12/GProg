@@ -18,4 +18,9 @@ public class Door extends Construct {
         this.setItems(items);
     }
 
+    @Override
+    public Construct clone () {
+        return new Door();
+    }
+
 }

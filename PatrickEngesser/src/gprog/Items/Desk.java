@@ -20,4 +20,9 @@ public class Desk extends Construct {
         this.setItems(items);
     }
 
+    @Override
+    public Construct clone () {
+        return new Desk();
+    }
+
 }

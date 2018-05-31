@@ -18,4 +18,9 @@ public class Chair extends Construct {
         this.setItems(items);
     }
 
+    @Override
+    public Construct clone () {
+        return new Chair();
+    }
+
 }
