@@ -1,6 +1,7 @@
 package gprog;
 
 
+import gprog.Items.Air;
 import gprog.Items.Item;
 import gprog.Items.Pickaxe;
 
@@ -13,7 +14,7 @@ public class Inventory {
 
 	public Inventory(){
 		for (int i = 0; i < 32; i++) {
-			inventory[i] = new ItemStack(null,0);
+			inventory[i] = new ItemStack(new Air(),0);
 		}
 		inventory[0] = new ItemStack(new Pickaxe(),12);
 		//inventory[1] = new ItemStack(new StrongerPickaxe(),13);

@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 
 
 import gprog.Items.Item;
+import gprog.Items.Tool;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
@@ -64,21 +65,33 @@ public class Control {
 	
 	/////schauen ob abbauen m�glich ist////////////////////////////////////////////////////
 	public boolean minePossible(Item map, Item invPos){
-		if (map.getMiningLevel() == invPos.getMiningLevel()) {
+
+		int miningMap = map.getMiningLevel();
+		int miningInvPos;
+		if (invPos.getID() < 12) {
+			miningInvPos = 1;
+		} else {
+			miningInvPos = invPos.getMiningLevel();
+		}
+
+		if (miningMap == miningInvPos) {
 			return true;
-		} else if (map.getMiningLevel() == 5) {
-			if (invPos.getMiningLevel() == 5) {
+		} else if (miningMap == 5) {
+			if (miningInvPos == 5) {
 				return true;
 			} else {
+				System.out.println("Mining not possible!");
 				return false;
 			}
-		} else if (map.getMiningLevel() == 0) {
+		} else if (miningMap == 0) {
+			System.out.println("Mining not possible!");
 			return false;
 		}
-		else if (map.getMiningLevel() <  invPos.getMiningLevel()) {
+		else if (miningMap <  miningInvPos) {
 			return true;
 		}
 		else {
+			System.out.println("Mining not possible!");
 			return false;
 		}
 	}
