@@ -1,3 +1,7 @@
+package gprog;
+
+import gprog.Items.*;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -20,11 +24,14 @@ public class GenerateWorld {
     int numberdiamond = 10;
 
 
-    public int[][] createWorld(String seed, int pheight) {
+    public Item[][] createWorld(String seed, int pheight) {
         heigth = pheight;
 
         width = splitseed(seed);
         map = new int[width][heigth];
+
+        System.out.print(width + " " + heigth);
+
         World.width = width;
 
         createLandscape();
@@ -48,7 +55,7 @@ public class GenerateWorld {
         // place Trees
         placeRandomlyTrees();
 
-        return map;
+        return convertMap(map);
     }
 
     private int splitseed(String seed) {
@@ -136,6 +143,44 @@ public class GenerateWorld {
         numbersilver = width / 40;
         numbergold = width / 70;
         numberdiamond = width / 100;
+    }
+
+    private Item[][] convertMap(int[][] imap){
+        Item[][] itemmap = new Item[width][heigth];
+
+        for (int x = 0; x < width; x++){
+            for (int y = 0; y < heigth; y++){
+                switch (imap[x][y]){
+                    case 0: itemmap[x][y] = new Air();
+                            break;
+                    case 1: itemmap[x][y] = new Dirt();
+                            break;
+                    case 2: itemmap[x][y] = new Stone();
+                            break;
+                    case 3: itemmap[x][y] = new Wood();
+                            break;
+                    case 4: itemmap[x][y] = new IronOre();
+                            break;
+                    case 5: itemmap[x][y] = new CooperOre();
+                            break;
+                    case 6: itemmap[x][y] = new SilverOre();
+                            break;
+                    case 7: itemmap[x][y] = new GoldOre();
+                            break;
+                    case 8: itemmap[x][y] = new Diamond();
+                            break;
+                    case 9: itemmap[x][y] = new Leaves();
+                            break;
+                    case 10: itemmap[x][y] = new Water();
+                            break;
+                    case 11: itemmap[x][y] = new Sand();
+                            break;
+                    default: itemmap[x][y] = new Air();
+                            break;
+                }
+            }
+        }
+        return itemmap;
     }
 
 
@@ -244,7 +289,7 @@ public class GenerateWorld {
             acth = targeth;
         } else {
             if (acth > targeth) {
-                while (acth > targeth) {
+                while (acth > targeth && start < World.width) {
                     if (Math.abs(starth - acth)<=2){
                         if (start % 2 == 0) {
                             acth--;
@@ -265,7 +310,7 @@ public class GenerateWorld {
                     start++;
                 }
             } else if (acth < targeth) {
-                while (acth < targeth) {
+                while (acth < targeth && start < World.width) {
                     if (Math.abs(starth - acth)<=2){
                         if (start % 2 == 0) {
                             acth++;
@@ -296,7 +341,7 @@ public class GenerateWorld {
         if (start == 0) {                                                                                                // If the biom is the first
             acth = targeth;
         } else if (id != 3) {                                                                                            // if the biom before wasn't a mountain biom
-            while (acth > targeth) {
+            while (acth > targeth && start < World.width) {
                 acth -= 2;
 
                 fillStandard(start);
@@ -316,7 +361,7 @@ public class GenerateWorld {
             acth = targeth;
         } else if (id != 4) {
             if (acth > targeth) {
-                while (acth > targeth) {
+                while (acth > targeth && start < World.width) {
                     if (Math.abs(starth - acth)<=2){
                         sandheight = 2;
                         if (start % 2 == 0) {
@@ -342,7 +387,7 @@ public class GenerateWorld {
                     start++;
                 }
             } else if (acth < targeth) {
-                while (acth < targeth) {
+                while (acth < targeth && start < World.width) {
                     if (Math.abs(starth - acth)<=2){
                         sandheight = 2;
                         if (start % 2 == 0) {
@@ -469,7 +514,6 @@ public class GenerateWorld {
 
             number--;
         }
-        //
     }
 
     private void placeOre(int number, int oreid) {
@@ -564,7 +608,7 @@ public class GenerateWorld {
                 map[x][y] = 0;
             }
         }
-    }
+    }                                                                //
 
 
 
@@ -579,7 +623,7 @@ public class GenerateWorld {
         } else {
             return false;
         }
-    }
+    }                                                        // checks, if the world generated by the given Seed is bigger than 400 blocks
 
     private String randomString() {
         final int STRING_LENGTH = 4;
@@ -589,7 +633,7 @@ public class GenerateWorld {
             sb.append((char)((int)(Math.random()*26)+97));
         }
         return sb.toString();
-    }
+    }                                                                                 // creates a random String
 
     private int parseCharToInt(char c) {
         try {
@@ -597,10 +641,10 @@ public class GenerateWorld {
         } catch (Exception e) {
             return c;
         }
-    }
+    }                                                                            // parses a char into an int if possible
 
     private int newRandom(int min, int max) {
         int diff = max - min;
         return (int) (Math.random() * diff) + min;
-    }
+    }                                                                       // creates a Random number between min and max
 }

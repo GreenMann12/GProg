@@ -1,8 +1,10 @@
+package gprog;
+
 public class Main {
     public static void main(String[] args) {
         World world = new World();
         world.generateWorld();
-
+        /*
         for (int y = 0; y < World.heigth; y++){
             for (int x = 0; x < World.width; x++){
                 System.out.print(world.map[x][y]);
@@ -14,7 +16,7 @@ public class Main {
             }
             System.out.print("\n");
         }
-
-        System.out.println(World.width);
+*/
+        //System.out.println(World.width);
     }
 }

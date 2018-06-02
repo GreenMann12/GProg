@@ -1,4 +1,4 @@
-import javafx.scene.image.Image;
+package gprog;
 
 public class Block {
   public int id;

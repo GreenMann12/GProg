@@ -1,3 +1,5 @@
+package gprog;
+
 public class Biom {
     int biomID;
     int size;
