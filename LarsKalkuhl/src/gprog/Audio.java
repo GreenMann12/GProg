@@ -14,6 +14,8 @@ import java.io.File;
  */
 public class Audio {
 
+	private static Clip clip;
+	
      public static void music(String track)
     {
         String trackname = track;
@@ -31,7 +33,7 @@ public class Audio {
     }
     public static void musicLoop(String track)
     {
-        final String trackname = track;
+    	final String trackname = track;
 
         new Thread(new Runnable()
         {
@@ -41,10 +43,10 @@ public class Audio {
             while (true)
 
             { try {
-                Clip clip = AudioSystem.getClip();
+                clip = AudioSystem.getClip();
                 AudioInputStream inputstream = AudioSystem.getAudioInputStream(new File(trackname));
                 clip.open(inputstream);
-                clip.loop(1);
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
                 Thread.sleep(clip.getMicrosecondLength());
             }catch (Exception e) {
             e.printStackTrace();
@@ -55,5 +57,17 @@ public class Audio {
 
     }
 
+    public static void stopPlay(String track)
+    {
+        try {
+            if (clip != null) {
+                clip.stop();
+                clip.close();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+    }
 
 }

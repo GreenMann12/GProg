@@ -6,6 +6,8 @@ import java.util.TimerTask;
 
 import com.sun.javafx.image.impl.ByteIndexed.Getter;
 
+import gprog.Items.Air;
+import gprog.Items.Item;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -41,21 +43,25 @@ public class World{
 	private boolean showInventory = false;
 	private boolean menuOpen  = false;
 	private int inventoryPos = 0;
-	private int motion = 0;
+	private int motion = 10;
 	Timer timer = new Timer();
 	private int dayTime = 0;
 	boolean holdItem = false;
-	int holdItemId = 0;
+	ItemStack holdItemId = null;
 	int holdItemIdCount = 0;
+	
+	int direction = 0;
+	boolean left=true;
+	boolean right=true;
 	
 	//Guter Alter Sounds//////
 	int inventorySound = 0;
 	//////////////////////////
 	
-	public int[][] map;
+	public Item[][] map;
 	public GameCharacter hero;
 	public Monster[] monster;
-	private int inventory[][] = new int[32][2];
+	private ItemStack inventory[] = new ItemStack[32];
 	
 	public World(Stage stage, Control control, Save savefile){
 		this.control = control;
@@ -97,14 +103,14 @@ public class World{
 		
 		///////Anzeige Thread/////////////////////////////////////////////////////
 		
-		MyAnimTimer animTimer = new MyAnimTimer(20) {
+		MyAnimTimer animTimer = new MyAnimTimer(32) {
 			
 			@Override
 			public void handle() {
 				int koordX = 0;
 				int koordY = 0;
-				int xChar = hero.getX();
-				int yChar = hero.getY();
+				int xChar = hero.getxCoord();
+				int yChar = hero.getyCoord();
 				
 				canvas.setHeight(scene.getHeight());
 				canvas.setWidth(scene.getWidth());
@@ -117,34 +123,54 @@ public class World{
 				for (int w = x; w < width; w++) {
 					koordY = 0;
 					for (int h = y; h < heigth; h++) {
-						if (map[w][h] == 0 && dayTime == 0) {
+						if (map[w][h].getID() == 0 && dayTime == 0) {
 							gc.drawImage(draw.loadBlockTexture(0), koordX, koordY);
 						}
-						else if (map[w][h] == 0 && dayTime == 1) {
+						else if (map[w][h].getID() == 0 && dayTime == 1) {
 							gc.drawImage(draw.loadNightTexture(), koordX, koordY);
 						}
 						else{
-							gc.drawImage(draw.loadBlockTexture(map[w][h]), koordX, koordY);
+							gc.drawImage(draw.loadBlockTexture(map[w][h].getID()), koordX, koordY);
 						}
 						koordY += 15;
 					}
 					koordX += 15;
+				}	
+				
+				
+
+				if (checkColl(hero.getxCoord(), hero.getyCoord() + 3) && checkColl(hero.getxCoord() - 1, hero.getyCoord() + 3)) {
+
+					hero.setyGravity(1);
+				} else {
+					hero.setCanJump(true);
+					hero.setyGravity(0);
 				}
 				
+				updateHero(direction);
+				right = true;
+				left = true;
+				
+				
 				//charakter animation
-				if (motion < 6) {
+				if (motion < 2) {
 					gc.drawImage(draw.loadCharTexture(1), ((int) (scene.getWidth()/30))*15, ((int) (scene.getHeight()/30))*15);
 					motion++;
 				}
-				if (motion > 5) {
+				else if (motion > 1 && motion < 5) {
 					gc.drawImage(draw.loadCharTexture(2), ((int) (scene.getWidth()/30))*15, ((int) (scene.getHeight()/30))*15);
 					motion++;
 				}
-				if (motion > 10) {
+				else if(motion == 5){
+					gc.drawImage(draw.loadCharTexture(2), ((int) (scene.getWidth()/30))*15, ((int) (scene.getHeight()/30))*15);
 					motion = 0;
 				}
-				if (inventory[inventoryPos][0] != 0) {
-					gc.drawImage(draw.loadItemTexture(inventory[inventoryPos][0]), ((int) (scene.getWidth()/30))*15, ((int) (scene.getHeight()/30))*15 +10);
+				else {
+					gc.drawImage(draw.loadCharTexture(1), ((int) (scene.getWidth()/30))*15, ((int) (scene.getHeight()/30))*15);
+				}
+				
+				if (inventory[inventoryPos].getID() != 0) {
+					gc.drawImage(draw.loadItemTexture(inventory[inventoryPos].getID()), ((int) (scene.getWidth()/30))*15, ((int) (scene.getHeight()/30))*15 +10);
 				}
 				//gc.drawImage(draw.loadCharTexture(0), ((int) (scene.getWidth()/30))*15, ((int) (scene.getHeight()/30))*15);
 				//gc.drawImage(draw.loadCharTexture(0), ((int) (scene.getWidth()/30))*15, ((int) (scene.getHeight()/30))*15);  //(400,300)
@@ -159,15 +185,15 @@ public class World{
 					int iyPos = 1;
 					
 					for (int i = 0; i < 32; i++) {
-						gc.drawImage(draw.loadItemInventoryTexture(inventory[i][0]), ixPos, iyPos);
-						if (inventory[i][1] > 0) {
+						gc.drawImage(draw.loadItemInventoryTexture(inventory[i].getID()), ixPos, iyPos);
+						if (inventory[i].getSize() > 0) {
 							gc.setFill(Color.BLACK);
 							gc.setFont(new Font(15));
-							if (inventory[i][1] < 10) {
-								gc.fillText(String.valueOf(inventory[i][1]), ixPos + 20, iyPos + 25);
+							if (inventory[i].getSize() < 10) {
+								gc.fillText(String.valueOf(inventory[i].getSize()), ixPos + 20, iyPos + 25);
 							}
 							else {
-								gc.fillText(String.valueOf(inventory[i][1]), ixPos + 10, iyPos + 25);
+								gc.fillText(String.valueOf(inventory[i].getSize()), ixPos + 10, iyPos + 25);
 							}
 						}
 						ixPos += 31;
@@ -186,15 +212,15 @@ public class World{
 					int iyPos = 1;
 					
 					for (int i = 0; i < 8; i++) {
-						gc.drawImage(draw.loadItemInventoryTexture(inventory[i][0]), ixPos, iyPos);
-						if (inventory[i][1] > 0) {
+						gc.drawImage(draw.loadItemInventoryTexture(inventory[i].getID()), ixPos, iyPos);
+						if (inventory[i].getSize() > 0) {
 							gc.setFill(Color.BLACK);
 							gc.setFont(new Font(15));
-							if (inventory[i][1] < 10) {
-								gc.fillText(String.valueOf(inventory[i][1]), ixPos + 20, iyPos + 25);
+							if (inventory[i].getSize() < 10) {
+								gc.fillText(String.valueOf(inventory[i].getSize()), ixPos + 20, iyPos + 25);
 							}
 							else {
-								gc.fillText(String.valueOf(inventory[i][1]), ixPos + 10, iyPos + 25);
+								gc.fillText(String.valueOf(inventory[i].getSize()), ixPos + 10, iyPos + 25);
 							}
 						}
 						ixPos += 31;
@@ -204,7 +230,7 @@ public class World{
 				//Monster
 				if (monster != null) {
 					for (int i = 0; i < monster.length; i++) {
-						System.out.println("TADAAA I'M A MONSTER!");
+						//System.out.println("TADAAA I'M A MONSTER!");
 					}
 				}
 			}
@@ -242,30 +268,72 @@ public class World{
 		scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
 			@Override
             public void handle(KeyEvent event) {
-                if(event.getCode().toString().equals("W") && menuOpen == false){
-                	if(hero.getY() > 20){
-                		hero.setY(hero.getY() - 1);
-                	}
-                }
-                if(event.getCode().toString().equals("A") && menuOpen == false){
-                	if (hero.getX() > 100) {
-                		hero.setX(hero.getX() - 1);
-                		Random ran = new Random();
-                		int i = ran.nextInt(3);
-                		Audio.music("src/Audio/grass"+i+".wav");
+				int test = 0;
+                if(event.getCode().toString().equals("SPACE") && menuOpen == false){
+                	if (hero.getyCoord() > 20) {
+						if (checkColl(hero.getxCoord(), hero.getyCoord() - 1) && checkColl(hero.getxCoord() - 1, hero.getyCoord() - 1)) {
+							test = -1;
+							if (checkColl(hero.getxCoord(), hero.getyCoord() - 2) && checkColl(hero.getxCoord() - 1, hero.getyCoord() - 2)) {
+								test = -2;
+							}
+
+							if (hero.getCanJump()) {
+								hero.setyGravity(0);
+								hero.setyVel(test);
+								TimerTask timerTask = new TimerTask() {
+									@Override
+									public void run() {
+										try {
+											Thread.sleep(200);
+										} catch (Exception e) {
+											e.printStackTrace();
+										}
+										hero.setyVel(0);
+										hero.setCanJump(false);
+
+									}
+								};
+								timer.schedule(timerTask, 10);
+
+								//hero.setyCoord(hero.getyCoord() - 1);
+							} else {
+
+							}
+						}
+
 					}
                 }
+                if(event.getCode().toString().equals("A") && menuOpen == false){
+                	direction = 1;
+                	if (hero.getxCoord() > 100) {
+                		if (checkColl(hero.getxCoord() - 2, hero.getyCoord()) && checkColl(hero.getxCoord() - 2, hero.getyCoord() + 1) && checkColl(hero.getxCoord() - 2, hero.getyCoord() + 2)) {
+                			if(left)
+                			hero.setxVel(-1);
+                			Random ran = new Random();
+                			int i = ran.nextInt(3);
+                			Audio.music("src/Audio/grass"+i+".wav");
+                			motion = 0;
+                		}
+					}
+                }
+                /*
                 if(event.getCode().toString().equals("S") && menuOpen == false){
-                	if(hero.getY() < 600){
-                		hero.setY(hero.getY() + 1);
+                	if(hero.getyCoord() < 600){
+                		hero.setyCoord(hero.getyCoord() + 1);
                 	}
                 }
+                */
                 if(event.getCode().toString().equals("D") && menuOpen == false){
-                	if (hero.getX() < width - (int) (scene.getWidth()/30)) {
-                		hero.setX(hero.getX() + 1);
-                		Random ran = new Random();
-                		int i = ran.nextInt(3);
-                		Audio.music("src/Audio/grass"+i+".wav");
+                	direction = 2;
+                	if (hero.getxCoord() < width - (int) (scene.getWidth()/30)) {
+                		if (checkColl(hero.getxCoord() + 1, hero.getyCoord()) && checkColl(hero.getxCoord() + 1, hero.getyCoord() + 1) && checkColl(hero.getxCoord() + 1, hero.getyCoord() + 2)) {
+							if(right)
+                			hero.setxVel(1);
+							Random ran = new Random();
+							int i = ran.nextInt(3);
+							Audio.music("src/Audio/grass"+i+".wav");
+							motion = 0;
+                		}
 					}
                 }
                 if(event.getCode().toString().equals("E") && menuOpen == false){
@@ -335,7 +403,15 @@ public class World{
 
 						@Override
 						public void handle(ActionEvent event) {
-							control.saveGame(map, hero.getX(), hero.getY());
+							class SaveThread extends Thread{
+								@Override
+								public void run(){
+									control.saveGame(map, hero.getxCoord(), hero.getyCoord());
+								}
+							}
+							
+							SaveThread saveThread = new SaveThread();
+							saveThread.start();
 							scene.setRoot(group);
 							menuOpen = false;
 							animTimer.start();
@@ -346,6 +422,28 @@ public class World{
             		b_exit.setOnAction(e -> System.exit(0));
 				}
             }
+		});
+		
+		
+		scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent event) {
+				if (event.getCode().toString().equals("SPACE")) {
+					hero.setyVel(0);
+
+				}
+				if (event.getCode().toString().equals("A")) {
+					hero.setxVel(0);
+					motion = 10;
+				}
+				if (event.getCode().toString().equals("S")) {
+					hero.setyVel(0);
+				}
+				if (event.getCode().toString().equals("D")) {
+					hero.setxVel(0);
+					motion = 10;
+				}
+			}
 		});
 		
 		/////////Maus Eingaben///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -365,40 +463,41 @@ public class World{
 						public void run() {
 							try {
 								Thread.sleep(1000);
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
+							
 							if (mousePressed) {
-								int x = (int) (hero.getX() - (scene.getWidth()/30)) + (int)(event.getSceneX()/15);
-								int y = (int) (hero.getY() - (scene.getHeight()/30)) + (int)(event.getSceneY()/15);
+								int x = (int) (hero.getxCoord() - (scene.getWidth()/30)) + (int)(event.getSceneX()/15);
+								int y = (int) (hero.getyCoord() - (scene.getHeight()/30)) + (int)(event.getSceneY()/15);
 								
-								if (map[x][y] != 0 && map[x][y] != 10 && control.minePossible(map[x][y], inventory[inventoryPos][0]) && control.checkMinePos(x, y, hero.getX(), hero.getY())) {
+								if (map[x][y].getID() != 0 && map[x][y].getID() != 10 && control.minePossible(map[x][y], inventory[inventoryPos].getItem()) && control.checkMinePos(x, y, hero.getxCoord(), hero.getyCoord())) {
 									if (control.inventoryIsFull() != false) {
 										control.inventoryAddItem(map[x][y]);
-										map[x][y] = 0;
+										map[x][y] = new Air();
 										inventory = control.getInventory();
 										System.out.println((int) (event.getSceneX()) + "  und  " + (int) (event.getSceneY()));
 										System.out.println(x+ "  und  " + y);
-										System.out.println(hero.getX()+ "  und  " + hero.getY());
+										System.out.println(hero.getxCoord()+ "  und  " + hero.getyCoord());
 										System.out.println(scene.getHeight());
 										System.out.println("------------------------------------");
 									}
 								}
+							}
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
 							}
 						}
 					};
 					
 					int ix = (int) (event.getSceneX()/31)  + 8 * ((int) (event.getSceneY()/31));
 					
-					if (showInventory == true && control.inventarPos((int) event.getSceneX(), (int) event.getSceneY()) && inventory[ix][0] != 0) {
-						scene.setCursor(new ImageCursor(draw.loadItemInventoryTexture(inventory[ix][0])));
+					if (showInventory == true && control.inventarPos((int) event.getSceneX(), (int) event.getSceneY()) && inventory[ix].getID() != 0) {
+						scene.setCursor(new ImageCursor(draw.loadItemInventoryTexture(inventory[ix].getID())));
 						holdItem = true;
-						holdItemId = inventory[ix][0];
-						holdItemIdCount = inventory[ix][1];
+						holdItemId = inventory[ix];
+						holdItemIdCount = inventory[ix].getSize();
 					}
 					else {
-						timer.schedule(timerTask, 10);
+						timer.schedule(timerTask, 500);
 					}
 					
 					scene.setOnMouseReleased(new EventHandler<MouseEvent>() {
@@ -407,20 +506,19 @@ public class World{
 						public void handle(MouseEvent event) {
 							if (event.getButton() == MouseButton.PRIMARY) {
 								if (holdItem) {
-									if (showInventory == true && control.inventarPos((int) event.getSceneX(), (int) event.getSceneY()) && inventory[(int) (event.getSceneX()/31) + 8 * ((int) (event.getSceneY()/31))][0] == 0) {
-										inventory[ix][0] = 0;
-										inventory[ix][1] = 0;
-										inventory[(int) (event.getSceneX()/31) + 8 * ((int) (event.getSceneY()/31))][0] = holdItemId;
-										inventory[(int) (event.getSceneX()/31) + 8 * ((int) (event.getSceneY()/31))][1] = holdItemIdCount;
+									if (showInventory == true && control.inventarPos((int) event.getSceneX(), (int) event.getSceneY()) && inventory[(int) (event.getSceneX()/31) + 8 * ((int) (event.getSceneY()/31))].getID() == 0) {
+										inventory[ix] = new ItemStack(null,0);
+										inventory[(int) (event.getSceneX()/31) + 8 * ((int) (event.getSceneY()/31))] = holdItemId;
+										//inventory[(int) (event.getSceneX()/31) + 8 * ((int) (event.getSceneY()/31))][1] = holdItemIdCount;
 									}
-									else if (showInventory == true && control.inventarPos((int) event.getSceneX(), (int) event.getSceneY()) && inventory[(int) (event.getSceneX()/31) + 8 * ((int) (event.getSceneY()/31))][0] != 0) {
-										inventory[ix][0] = inventory[(int) (event.getSceneX()/31) + 8 * ((int) (event.getSceneY()/31))][0];
-										inventory[ix][1] = inventory[(int) (event.getSceneX()/31) + 8 * ((int) (event.getSceneY()/31))][1];
-										inventory[(int) (event.getSceneX()/31) + 8 * ((int) (event.getSceneY()/31))][0] = holdItemId;
-										inventory[(int) (event.getSceneX()/31) + 8 * ((int) (event.getSceneY()/31))][1] = holdItemIdCount;
+									else if (showInventory == true && control.inventarPos((int) event.getSceneX(), (int) event.getSceneY()) && inventory[(int) (event.getSceneX()/31) + 8 * ((int) (event.getSceneY()/31))].getID() != 0) {
+										inventory[ix] = inventory[(int) (event.getSceneX()/31) + 8 * ((int) (event.getSceneY()/31))];
+										//inventory[ix][1] = inventory[(int) (event.getSceneX()/31) + 8 * ((int) (event.getSceneY()/31))][1];
+										inventory[(int) (event.getSceneX()/31) + 8 * ((int) (event.getSceneY()/31))] = holdItemId;
+										//inventory[(int) (event.getSceneX()/31) + 8 * ((int) (event.getSceneY()/31))][1] = holdItemIdCount;
 									}
 									holdItem = false;
-									holdItemId = 0;
+									holdItemId = null;
 									scene.setCursor(Cursor.DEFAULT);
 								}
 								mousePressed = false;
@@ -433,12 +531,11 @@ public class World{
 				
 				//platzieren der Blöcke
 				if (event.getButton() == MouseButton.SECONDARY && menuOpen == false) {
-					int x = (int) (hero.getX() - (scene.getWidth()/30)) + (int)(event.getSceneX()/15);
-					int y = (int) (hero.getY() - (scene.getHeight()/30)) + (int)(event.getSceneY()/15);
+					int x = (int) (hero.getxCoord() - (scene.getWidth()/30)) + (int)(event.getSceneX()/15);
+					int y = (int) (hero.getyCoord() - (scene.getHeight()/30)) + (int)(event.getSceneY()/15);
 					inventory = control.getInventory();
-					if (inventory[inventoryPos][0] != 0 && map[x][y] == 0 && inventory[inventoryPos][0] < draw.getBlock() && control.checkMinePos(x, y, hero.getX(), hero.getY())) {
-						map[x][y] = inventory[inventoryPos][0];
-						control.inventoryRemoveItem(inventoryPos);
+					if (inventory[inventoryPos].getID() != 0 && map[x][y].getID() == 0 && inventory[inventoryPos].getID() < draw.getBlock() && control.checkMinePos(x, y, hero.getxCoord(), hero.getyCoord())) {
+						map[x][y] = control.inventoryRemoveItem(inventoryPos);
 					}
 				}
 			}
@@ -447,12 +544,44 @@ public class World{
 		stage.setScene(scene);
 	}
 	
+	
+	public void updateHero(int r) {
+		if (r == 1) {
+			if (!checkColl(hero.getxCoord() - 2, hero.getyCoord()) || !checkColl(hero.getxCoord() - 2, hero.getyCoord() + 1) || !checkColl(hero.getxCoord() - 2, hero.getyCoord() + 2))
+			{
+				hero.setxVel(0);
+				left= false;
+			}
+		}
+		else if (r==2) {
+			if (!checkColl(hero.getxCoord() + 1, hero.getyCoord()) || !checkColl(hero.getxCoord() + 1, hero.getyCoord() + 1) || !checkColl(hero.getxCoord() + 1, hero.getyCoord() + 2))
+			{
+				hero.setxVel(0);
+				right= false;
+			}
+		}
+
+						hero.setxCoord(hero.getxCoord() + hero.getxVel());
+						hero.setyCoord(hero.getyCoord() + hero.getyVel() + hero.getyGravity());
+					}
+	
+	private boolean checkColl(int x, int y) {
+		if (map[x][y].getID() == 0 || map[x][y].getID() == 3 || map[x][y].getID() == 10 || map[x][y].getID() == 9) {
+
+			return true;
+		} else {
+
+			return false;
+		}
+
+	}
+	
 	///////Spawnpunkt des Spielers zu Begin eines neuen Spiels//////////////////////////////////////////////
 	
 	private int playerSpawn(int x){
 		int y = 0;
 		for (int i = 0; i < heigth; i++) {
-			if (map[x][i] == 1) {
+			if (map[x][i].getID() == 1) {
 				y = i-3;
 				i = heigth;
 			}

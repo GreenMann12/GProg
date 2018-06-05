@@ -7,6 +7,7 @@ import java.io.FilenameFilter;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import gprog.Items.Item;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
@@ -16,6 +17,7 @@ public class Control {
 
 	World world = null;
 	Inventory inventory = new Inventory();
+	ConstructMenu constructMenu = new ConstructMenu();
 	Save savefile = new Save();
 	String worldName = "";
 	
@@ -30,14 +32,14 @@ public class Control {
 		world = new World(stage, this, savefile);
 	}
 	
-	public int[][] getInventory(){
+	public ItemStack[] getInventory(){
 		
 		//verknüpfung mit inventar klasse (Patrick2)
 		
 		return inventory.getInventory();
 	}
 	
-	public void setInventory(int[][] inventory){
+	public void setInventory(ItemStack[] inventory){
 		this.inventory.setInventory(inventory);
 	}
 	
@@ -52,26 +54,66 @@ public class Control {
 		}
 	}
 	
-	public void inventoryAddItem(int id){
-		inventory.addItem(id);
+	public void inventoryAddItem(Item item){
+		inventory.addItem(item);
 	}
 	
-	public void inventoryRemoveItem(int pos){
-		inventory.removeItem(pos);
+	public Item inventoryRemoveItem(int pos){
+		Item item = inventory.removeItem(pos);
+		return item;
 	}
 	
 	
 	/////schauen ob abbauen möglich ist////////////////////////////////////////////////////
-	public boolean minePossible(int map, int invPos){
-		if (map == 1 || map == 11) {
-			return true;
-		}
-		else if (map > 1 && invPos == 12) {
-			return true;
-		}
-		else {
+	public boolean minePossible(Item map, Item invPos){
+
+		try {
+			int miningMap = map.getMiningLevel();
+			int miningInvPos;
+			if (invPos.getID() < 12) {
+				miningInvPos = 1;
+			} else {
+				miningInvPos = invPos.getMiningLevel();
+			}
+
+			if (miningMap == miningInvPos) {
+				return true;
+			} else if (miningMap == 5) {
+				if (miningInvPos == 5) {
+					return true;
+				} else {
+					System.out.println("Mining not possible!");
+					return false;
+				}
+			} else if (miningMap == 0) {
+				System.out.println("Mining not possible!");
+				return false;
+			}
+			else if (miningMap <  miningInvPos) {
+				return true;
+			}
+			else {
+				System.out.println("Mining not possible!");
+				return false;
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			return false;
 		}
+		
+	}
+	
+	public boolean checkIfConstructable (ItemStack[] inventory, ConstructMenu constructMenu, int constrPos){
+		for (ItemStack itemStack : inventory) {
+			if (itemStack.getID() == constructMenu.getConstruct(constrPos).getItems().get(0).getID()){
+				if (itemStack.getSize() >= constructMenu.getConstruct(constrPos).getItems().size()){
+					return true;
+				} else {
+					return false;
+				}
+			}
+		}
+		return false;
 	}
 	
 	public boolean checkMinePos(int XBlockPos, int YBlockPos, int XCharPos, int YCharPos){
@@ -88,7 +130,7 @@ public class Control {
 	public Monster[] createMonster(){
 		Monster[] monster = new Monster[3];
 		for (int i = 0; i < monster.length; i++) {
-			monster[i] = new Monster();
+			monster[i] = new Monster(100,100);
 		}
 		return monster;
 	}
@@ -104,7 +146,7 @@ public class Control {
 	}
 	
 	/////Speichern///////////////////////////////////////////////////////////////////////////
-	public void saveGame(int[][] map, int x, int y){
+	public void saveGame(Item[][] map, int x, int y){
 		savefile.saveData(worldName, map, x, y, inventory.getInventory());
 		
 		try {
@@ -114,7 +156,7 @@ public class Control {
 			oos.writeObject(savefile);
 			oos.close();
 		} catch (Exception e) {
-			Alert alert = new Alert(AlertType.ERROR, "Fehler beim speichern!", ButtonType.OK, ButtonType.CANCEL);
+			Alert alert = new Alert(AlertType.ERROR, e.getMessage(), ButtonType.OK, ButtonType.CANCEL);
 			alert.showAndWait();
 		}
 	}

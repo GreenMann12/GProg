@@ -89,6 +89,8 @@ public class TitleScreen extends Application{
 	
 	private void newGame(Stage stage, Scene scene){
 		//Audio.music stoppen
+		BorderPane borderPane = new BorderPane();
+		borderPane.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
 		GridPane gpNewGame = new GridPane();
 		TextField tf_Name = new TextField();
 		TextField tf_Seed = new TextField("2349120492");
@@ -96,19 +98,32 @@ public class TitleScreen extends Application{
 		
 		gpNewGame.add(new Text("Name: "), 0, 0);
 		gpNewGame.add(tf_Name, 1, 0);
+		gpNewGame.setMargin(tf_Name, new Insets(0,10,10,10));
 		gpNewGame.add(new Text("Seed: "), 0, 1);
 		gpNewGame.add(tf_Seed, 1, 1);
+		gpNewGame.setMargin(tf_Seed, new Insets(10,10,10,10));
 		gpNewGame.add(b_start, 1, 2);
+		gpNewGame.setMargin(b_start, new Insets(10,10,10,10));
 		
-		scene.setRoot(gpNewGame);
+		gpNewGame.setAlignment(Pos.CENTER);
 		
-		b_start.setOnAction(e -> new Control(stage, tf_Name.getText(), tf_Seed.getText()));
+		borderPane.setCenter(gpNewGame);
+		
+		scene.setRoot(borderPane);
+		
+		b_start.setOnAction(e -> startNewGame(stage, scene, tf_Name.getText(), tf_Seed.getText()));
+	}
+	
+	private void startNewGame(Stage stage, Scene scene, String name, String seed){
+		Audio.stopPlay("src/Audio/titleScreen.wav");
+		new Control(stage, name, seed);
 	}
 	
 	private void loadGame(Stage stage, Scene scene, BorderPane bpOld){
 		//Audio.music stoppen
 		
 		BorderPane borderPane = new BorderPane();
+		borderPane.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
 		GridPane gridPane = new GridPane();
 		
 		//Tabelle
@@ -130,6 +145,7 @@ public class TitleScreen extends Application{
 		        (ObservableValue<? extends String> ov, String old_val, String new_val) -> {
 		        	final Save save = loadSave(new_val);
 		        	if (save != null) {
+		        		Audio.stopPlay("src/Audio/titleScreen.wav");
 		        		new Control(stage, save);
 					}
 		        	else {

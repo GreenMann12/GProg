@@ -2,28 +2,14 @@ package gprog;
 
 public class GameCharacter extends Creature{
 
-	int x,y;
-	
-	public GameCharacter(int x, int y){
-		this.x = x;
-		this.y = y;
-	}
+	public GameCharacter(int _xC, int _yC){
+        setxCoord(_xC);
+        setyCoord(_yC);
+        setxVel(0);
+        setyVel(0);
+        setHealth(100);
 
-	public int getX() {
-		return x;
-	}
-
-	public void setX(int x) {
-		this.x = x;
-	}
-
-	public int getY() {
-		return y;
-	}
-
-	public void setY(int y) {
-		this.y = y;
-	}
+    }
 	
 	
 }

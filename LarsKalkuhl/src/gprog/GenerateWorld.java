@@ -1,10 +1,12 @@
 package gprog;
 
+import gprog.Items.*;
+
 import java.util.ArrayList;
 import java.util.Random;
 
 public class GenerateWorld {
-    int[][] map;
+    Item[][] map;
     ArrayList<Biom> bioms = new ArrayList<>();
     int heigth;
     int width;
@@ -20,13 +22,14 @@ public class GenerateWorld {
     int numbercopper = 30;
     int numbersilver = 20;
     int numbergold = 10;
+    int numberDiamond = 5;
 
 
-    public int[][] createWorld(String seed, int pheight) {
+    public Item[][] createWorld(String seed, int pheight) {
         heigth = pheight;
 
         width = splitseed(seed);
-        map = new int[width][heigth];
+        map = new Item[width][heigth];
         World.width = width;
 
         createLandscape();
@@ -44,6 +47,9 @@ public class GenerateWorld {
 
         // place gold ore
         placeOre(numbergold, 7);
+
+        // place diamond ore
+        placeOre(numberDiamond, 8);
 
         return map;
     }
@@ -324,11 +330,11 @@ public class GenerateWorld {
             int x = newRandom(start, end);
             int y = 0;
 
-            while (y < heigth && map[x][y] == 0) {
+            while (y < heigth && map[x][y] == new Air()) {
                 y++;
             }
 
-            map[x][y] = 10;
+            map[x][y] = new Water();
 
             number--;
         }
@@ -340,32 +346,32 @@ public class GenerateWorld {
             int y = 0;
 
             while (y < heigth) {
-                if (map[x][y] != 1) {
+                if (map[x][y].getID() != 1) {
                     y++;
                 } else {
                     // Tree trunk
-                    map[x][y - 1] = 3;
-                    map[x][y - 2] = 3;
-                    map[x][y - 3] = 3;
-                    map[x][y - 4] = 3;
-                    map[x][y - 5] = 3;
+                    map[x][y - 1] = new Wood();
+                    map[x][y - 2] = new Wood();
+                    map[x][y - 3] = new Wood();
+                    map[x][y - 4] = new Wood();
+                    map[x][y - 5] = new Wood();
 
                     // Leaves
 
-                    map[x - 1][y - 5] = 9;
-                    map[x + 1][y - 5] = 9;
+                    map[x - 1][y - 5] = new Leaves();
+                    map[x + 1][y - 5] = new Leaves();
 
-                    map[x][y - 6] = 9;
-                    map[x - 1][y - 6] = 9;
-                    map[x + 1][y - 6] = 9;
-                    map[x - 2][y - 6] = 9;
-                    map[x + 2][y - 6] = 9;
+                    map[x][y - 6] = new Leaves();
+                    map[x - 1][y - 6] = new Leaves();
+                    map[x + 1][y - 6] = new Leaves();
+                    map[x - 2][y - 6] = new Leaves();
+                    map[x + 2][y - 6] = new Leaves();
 
-                    map[x][y - 7] = 9;
-                    map[x - 1][y - 7] = 9;
-                    map[x + 1][y - 7] = 9;
+                    map[x][y - 7] = new Leaves();
+                    map[x - 1][y - 7] = new Leaves();
+                    map[x + 1][y - 7] = new Leaves();
 
-                    map[x][y - 8] = 9;
+                    map[x][y - 8] = new Leaves();
 
                     number--;
                     break;
@@ -379,11 +385,11 @@ public class GenerateWorld {
             int x = newRandom(start, end);
             int y = 0;
 
-            while (y < heigth && map[x][y] == 0) {
+            while (y < heigth && map[x][y].getID() == 0) {
                 y++;
             }
 
-            map[x][--y] = id;
+            map[x][--y] = new Plant();
 
             number--;
         }
@@ -392,12 +398,25 @@ public class GenerateWorld {
 
     private void placeOre(int number, int oreid) {
         Random random = new Random();
+        Item ore = null;
+
+        if (oreid == 4){
+            ore = new IronOre();
+        } else if (oreid == 5){
+            ore = new CooperOre();
+        } else if (oreid == 6) {
+            ore = new SilverOre();
+        } else if (oreid == 7) {
+            ore = new GoldOre();
+        } else if (oreid == 8) {
+            ore = new Diamond();
+        }
 
         for (int count = 0; count < number; count++) {
             int x = random.nextInt(width - 10) + 5;
             int y = 0;
 
-            while (y < heigth && map[x][y] != 2) {
+            while (y < heigth && map[x][y].getID() != 2) {
                 y++;
             }
 
@@ -405,48 +424,48 @@ public class GenerateWorld {
             if (y != heigth) {
                 y = random.nextInt(heigth - (y + 10)) + y;
 
-                map[x][y] = oreid;
+                map[x][y] = ore;
 
                 int exp = 5;
 
 
                 int r = random.nextInt(exp);
                 for (int c = 0; c < r; c++) {
-                    map[x + c][y] = oreid;
+                    map[x + c][y] = ore;
                 }
 
                 r = random.nextInt(exp);
                 for (int c = 0; c < r; c++) {
-                    map[x - c][y] = oreid;
+                    map[x - c][y] = ore;
                 }
 
                 r = random.nextInt(exp);
                 for (int c = 0; c < r; c++) {
-                    map[x][y + c] = oreid;
+                    map[x][y + c] = ore;
                 }
 
                 r = random.nextInt(exp);
                 for (int c = 0; c < r; c++) {
-                    map[x][y - c] = oreid;
+                    map[x][y - c] = ore;
                 }
 
 
                 // check if the diagonales should be ore too
                 //SE
-                if (map[x + 2][y] == oreid && map[x][y + 2] == oreid) {
-                    map[x + 1][y + 1] = oreid;
+                if (map[x + 2][y].getID() == oreid && map[x][y + 2].getID() == oreid) {
+                    map[x + 1][y + 1] = ore;
                 }
                 //SW
-                if (map[x - 2][y] == oreid && map[x][y + 2] == oreid) {
-                    map[x - 1][y + 1] = oreid;
+                if (map[x - 2][y].getID() == oreid && map[x][y + 2].getID() == oreid) {
+                    map[x - 1][y + 1] = ore;
                 }
                 //NW
-                if (map[x - 2][y] == oreid && map[x][y - 2] == oreid) {
-                    map[x - 1][y - 1] = oreid;
+                if (map[x - 2][y].getID() == oreid && map[x][y - 2].getID() == oreid) {
+                    map[x - 1][y - 1] = ore;
                 }
                 //NE
-                if (map[x + 2][y] == oreid && map[x][y - 2] == oreid) {
-                    map[x + 1][y - 1] = oreid;
+                if (map[x + 2][y].getID() == oreid && map[x][y - 2].getID() == oreid) {
+                    map[x + 1][y - 1] = ore;
                 }
             }
         }
@@ -457,15 +476,15 @@ public class GenerateWorld {
     private void fillStandard(int x){
         for (int y = 0; y < heigth; y++){
             if (y > acth + ground || (y > acth && y < 60)){
-                map[x][y] = 2;
+                map[x][y] = new Stone();
             } else if (y > acth && acth < waterlevel) {
-                map[x][y] = 1;
+                map[x][y] = new Dirt();
             } else if (y > acth && acth >= waterlevel) {
-                map[x][y] = 11;
+                map[x][y] = new Sand();
             } else if (y > waterlevel){
-                map[x][y] = 10;
+                map[x][y] = new Water();
             } else {
-                map[x][y] = 0;
+                map[x][y] = new Air();
             }
         }
     }
@@ -473,15 +492,15 @@ public class GenerateWorld {
     private void fillDesert(int x, int sandheigth){
         for (int y = 0; y < heigth; y++) {
             if (y < acth && y <= waterlevel) {
-                map[x][y] = 0;
+                map[x][y] = new Air();
             } else if (y < acth) {
-                map[x][y] = 10;
+                map[x][y] = new Water();
             } else if (y < acth + sandheigth && y > 65) {
-                map[x][y] = 11;
+                map[x][y] = new Sand();
             } else if (y < acth + sandheigth){
-                map[x][y] = 1;
+                map[x][y] = new Dirt();
             } else {
-                map[x][y] = 2;
+                map[x][y] = new Stone();
             }
         }
     }
@@ -490,11 +509,13 @@ public class GenerateWorld {
 
     private int parseCharToInt(char c) {
         try {
-            return Integer.parseInt(Character.toString(c));
+            return Integer.parseInt(String.valueOf(c));
         } catch (Exception e) {
             return c;
         }
     }
+
+
 
     private int newRandom(int min, int max) {
         int diff = max - min;

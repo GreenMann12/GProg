@@ -2,19 +2,21 @@ package gprog;
 
 import java.io.Serializable;
 
+import gprog.Items.Item;
+
 public class Save implements Serializable{
 
 	private String gameName;
-	private int[][] map;
+	private Item[][] map;
 	private int x;
 	private int y;
-	private int[][] inventory;
+	private ItemStack[] inventory;
 	
 	public Save(){
 		
 	}
 	
-	public void saveData(String name, int[][] map, int x, int y, int[][] inventory){
+	public void saveData(String name, Item[][] map, int x, int y, ItemStack[] inventory){
 		this.gameName = name;
 		this.map = map;
 		this.x = x;
@@ -26,7 +28,7 @@ public class Save implements Serializable{
 		return gameName;
 	}
 	
-	public int[][] getMap(){
+	public Item[][] getMap(){
 		return map;
 	}
 	
@@ -38,7 +40,7 @@ public class Save implements Serializable{
 		return y;
 	}
 	
-	public int[][] getInventory(){
+	public ItemStack[] getInventory(){
 		return inventory;
 	}
 }
