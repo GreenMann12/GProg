@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.ObjectInputStream;
 
+import javax.xml.ws.Response;
+
 import javafx.application.Application;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -14,6 +16,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -115,7 +118,7 @@ public class TitleScreen extends Application{
 	}
 	
 	private void startNewGame(Stage stage, Scene scene, String name, String seed){
-		Audio.stopPlay("src/Audio/titleScreen.wav");
+		Audio.stopPlay();
 		new Control(stage, name, seed);
 	}
 	
@@ -145,8 +148,39 @@ public class TitleScreen extends Application{
 		        (ObservableValue<? extends String> ov, String old_val, String new_val) -> {
 		        	final Save save = loadSave(new_val);
 		        	if (save != null) {
-		        		Audio.stopPlay("src/Audio/titleScreen.wav");
-		        		new Control(stage, save);
+		        		Audio.stopPlay();
+		        		ButtonType bt_del = new ButtonType("Löschen", ButtonBar.ButtonData.OK_DONE);
+		        		ButtonType bt_load = new ButtonType("Laden", ButtonBar.ButtonData.OK_DONE);
+		        		Alert alert = new Alert(AlertType.NONE, "Laden oder Löschen?", bt_load, bt_del,ButtonType.CANCEL);
+		        		alert.showAndWait().ifPresent(response -> {
+		        			if (response == bt_load) {
+		        				new Control(stage, save);
+							}
+		        			else if(response == bt_del){
+		        				Alert lalert = new Alert(AlertType.WARNING, "Wirklich löschen?", ButtonType.OK, ButtonType.CANCEL);
+		        				lalert.showAndWait();
+		        				if (lalert.getResult() == ButtonType.OK) {
+		        					try {
+			        					File f = new File("src/saves/"+new_val+".save");
+			        					if (f.exists()) {
+			        						f.delete();
+			        					}
+			        					else{
+			        						Alert walert = new Alert(AlertType.ERROR, "Fehler beim löschen!", ButtonType.OK, ButtonType.CANCEL);
+			        						walert.showAndWait();
+			        					}
+			        				} catch (Exception e) {
+			        					Alert walert = new Alert(AlertType.ERROR, "Fehler beim löschen!", ButtonType.OK, ButtonType.CANCEL);
+			        					walert.showAndWait();
+			        					loadGame(stage, scene, bpOld);
+			        				}
+		        				}
+		        				loadGame(stage, scene, bpOld);
+		        			}
+		        			else if(response == ButtonType.CANCEL){
+		        				loadGame(stage, scene, bpOld);
+		        			}
+		        		});
 					}
 		        	else {
 		        		Alert alert = new Alert(AlertType.ERROR, "Fehler beim laden test!", ButtonType.OK, ButtonType.CANCEL);
@@ -155,6 +189,7 @@ public class TitleScreen extends Application{
 		    });
 		
 		gridPane.add(listview, 0, 0);
+		gridPane.setAlignment(Pos.CENTER);
 		gridPane.setMargin(listview, new Insets(10,10,10,10));
 		
 		borderPane.setCenter(gridPane);

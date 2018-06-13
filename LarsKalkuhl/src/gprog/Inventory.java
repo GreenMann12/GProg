@@ -1,8 +1,10 @@
 package gprog;
 
 import gprog.Items.Air;
+import gprog.Items.Axe;
 import gprog.Items.Item;
 import gprog.Items.Pickaxe;
+import gprog.Items.Sword;
 
 /**
  * Created by Patrick on 29.05.2018.
@@ -16,8 +18,8 @@ public class Inventory {
 			inventory[i] = new ItemStack(new Air(),0);
 		}
 		inventory[0] = new ItemStack(new Pickaxe(),12);
-		//inventory[1] = new ItemStack(new StrongerPickaxe(),13);
-		//inventory[2] = new ItemStack(new StrongestPickaxe(),14);
+		inventory[1] = new ItemStack(new Axe(),15);
+		inventory[2] = new ItemStack(new Sword(),16);
 		//inventory[2] = new ItemStack(new Axe(),15);
 	}
 

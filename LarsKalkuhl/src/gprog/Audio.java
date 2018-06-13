@@ -15,6 +15,7 @@ import java.io.File;
 public class Audio {
 
 	private static Clip clip;
+
 	
      public static void music(String track)
     {
@@ -24,9 +25,11 @@ public class Audio {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                   Media sound = new Media(new File(trackname).toURI().toString());
-                   MediaPlayer mediaPlayer = new MediaPlayer(sound);
-                   mediaPlayer.play();
+
+                Media sound = new Media(new File(trackname).toURI().toString());
+                MediaPlayer mediaPlayer = new MediaPlayer(sound);
+                 mediaPlayer.play();
+
 
             }
         }).start();
@@ -57,16 +60,22 @@ public class Audio {
 
     }
 
-    public static void stopPlay(String track)
+    public static void stopPlay()
     {
-        try {
-            if (clip != null) {
-                clip.stop();
-                clip.close();
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+
+                try {
+                    if (clip != null) {
+                        clip.stop();
+                        clip.close();
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }}).start();
 
     }
 

@@ -53,6 +53,9 @@ public class World{
 	int direction = 0;
 	boolean left=true;
 	boolean right=true;
+	boolean attackleft=false;
+	boolean attackright=false;
+	int attackCount = 0;
 	
 	//Guter Alter Sounds//////
 	int inventorySound = 0;
@@ -140,7 +143,6 @@ public class World{
 				
 
 				if (checkColl(hero.getxCoord(), hero.getyCoord() + 3) && checkColl(hero.getxCoord() - 1, hero.getyCoord() + 3)) {
-
 					hero.setyGravity(1);
 				} else {
 					hero.setCanJump(true);
@@ -169,11 +171,44 @@ public class World{
 					gc.drawImage(draw.loadCharTexture(1), ((int) (scene.getWidth()/30))*15, ((int) (scene.getHeight()/30))*15);
 				}
 				
+				//Item in der Hand anzeigen
 				if (inventory[inventoryPos].getID() != 0) {
-					gc.drawImage(draw.loadItemTexture(inventory[inventoryPos].getID()), ((int) (scene.getWidth()/30))*15, ((int) (scene.getHeight()/30))*15 +10);
+					if (inventory[inventoryPos].getID() == 16) {
+						if (attackleft) {
+							gc.drawImage(draw.loadSwordTexture(0), ((int) (scene.getWidth()/30))*15 - 25, ((int) (scene.getHeight()/30))*15 + 10);
+							if (attackCount > 4) {
+								attackleft = false;
+							}
+							attackCount++;
+						}
+						else if (attackright) {
+							gc.drawImage(draw.loadSwordTexture(1), ((int) (scene.getWidth()/30))*15 + 25, ((int) (scene.getHeight()/30))*15 + 10);
+							if (attackCount > 4) {
+								attackright = false;
+							}
+							attackCount++;
+						}
+						else{
+							gc.drawImage(draw.loadItemTexture(inventory[inventoryPos].getID()), ((int) (scene.getWidth()/30))*15 - 6, ((int) (scene.getHeight()/30))*15);
+						}
+					}
+					else{
+						if (inventory[inventoryPos].getID() > 11) {
+							gc.drawImage(draw.loadItemTexture(inventory[inventoryPos].getID()), ((int) (scene.getWidth()/30))*15 - 6, ((int) (scene.getHeight()/30))*15);
+						}
+						else {
+							gc.drawImage(draw.loadItemTexture(inventory[inventoryPos].getID()), ((int) (scene.getWidth()/30))*15 - 6, ((int) (scene.getHeight()/30))*15 +10);
+						}
+					}
 				}
 				//gc.drawImage(draw.loadCharTexture(0), ((int) (scene.getWidth()/30))*15, ((int) (scene.getHeight()/30))*15);
 				//gc.drawImage(draw.loadCharTexture(0), ((int) (scene.getWidth()/30))*15, ((int) (scene.getHeight()/30))*15);  //(400,300)
+				
+				//Lebensanzeige Spieler
+				gc.setFill(Color.BLACK);
+				gc.setFont(new Font(20));
+				gc.fillText(String.valueOf(hero.getHealth()), ((int) (scene.getWidth()/30))*15, 25);
+				gc.drawImage(draw.loadHeroLife(), ((int) (scene.getWidth()/30))*15 + 40, 8);
 				
 				//Inventar anzeigen
 				if (showInventory) {
@@ -250,11 +285,15 @@ public class World{
 					}
 					if (dayTime == 0) {
 						dayTime = 1;
-						monster = control.createMonster();
+						if (monster == null) {
+							monster = control.createMonster();
+						}
 					}
 					else {
 						dayTime = 0;
-						monster = null;
+						if (monster != null) {
+							monster = null;
+						}
 					}
 				}
 			}
@@ -268,6 +307,7 @@ public class World{
 		scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
 			@Override
             public void handle(KeyEvent event) {
+				
 				int test = 0;
                 if(event.getCode().toString().equals("SPACE") && menuOpen == false){
                 	if (hero.getyCoord() > 20) {
@@ -311,7 +351,14 @@ public class World{
                 			hero.setxVel(-1);
                 			Random ran = new Random();
                 			int i = ran.nextInt(3);
-                			Audio.music("src/Audio/grass"+i+".wav");
+							if(map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.Sand.class)
+								Audio.music("src/Audio/sand"+i+".wav");
+							else if(map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.Stone.class)
+								Audio.music("src/Audio/stone"+i+".wav");
+							else if (map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.Dirt.class)
+								Audio.music("src/Audio/grass"+i+".wav");
+							else if (map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.Water.class)
+								Audio.music("src/Audio/water.wav");
                 			motion = 0;
                 		}
 					}
@@ -331,7 +378,14 @@ public class World{
                 			hero.setxVel(1);
 							Random ran = new Random();
 							int i = ran.nextInt(3);
-							Audio.music("src/Audio/grass"+i+".wav");
+							if(map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.Sand.class)
+								Audio.music("src/Audio/sand"+i+".wav");
+							else if(map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.Stone.class)
+								Audio.music("src/Audio/stone"+i+".wav");
+							else if (map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.Dirt.class)
+								Audio.music("src/Audio/grass"+i+".wav");
+							else if (map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.Water.class)
+								Audio.music("src/Audio/water.wav");
 							motion = 0;
                 		}
 					}
@@ -403,15 +457,9 @@ public class World{
 
 						@Override
 						public void handle(ActionEvent event) {
-							class SaveThread extends Thread{
-								@Override
-								public void run(){
-									control.saveGame(map, hero.getxCoord(), hero.getyCoord());
-								}
-							}
+							//Speichern/////////////////////////////////////////////////////////////
+							control.saveGame(map, hero.getxCoord(), hero.getyCoord());
 							
-							SaveThread saveThread = new SaveThread();
-							saveThread.start();
 							scene.setRoot(group);
 							menuOpen = false;
 							animTimer.start();
@@ -455,6 +503,18 @@ public class World{
 				
 				//abbauen der Blöcke
 				if (event.getButton() == MouseButton.PRIMARY && menuOpen == false) {
+					
+					if (inventory[inventoryPos].getID() == 16) {
+						if (event.getSceneX() >= (int) (scene.getWidth()/30)*15) {
+							attackright = true;
+							attackCount = 0;
+						}
+						else{
+							attackleft = true;
+							attackCount = 0;
+						}
+					}
+					else{
 					mousePressed = true;
 					
 					TimerTask timerTask = new TimerTask() {
@@ -462,7 +522,7 @@ public class World{
 						@Override
 						public void run() {
 							try {
-								Thread.sleep(1000);
+								Thread.sleep(500);
 							
 							if (mousePressed) {
 								int x = (int) (hero.getxCoord() - (scene.getWidth()/30)) + (int)(event.getSceneX()/15);
@@ -527,6 +587,7 @@ public class World{
 						}
 						
 					});
+				}
 				}
 				
 				//platzieren der Blöcke
