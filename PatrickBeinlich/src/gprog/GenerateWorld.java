@@ -13,9 +13,9 @@ public class GenerateWorld {
 
     Random random = new Random();
 
-    int waterlevel = 100;
+    final int waterlevel = 100;
+    final int ground = 5;
     int acth = 100;
-    int ground = 5;
 
     int numberiron = 50;
     int numbercopper = 30;
@@ -55,8 +55,20 @@ public class GenerateWorld {
         // place Trees
         placeRandomlyTrees();
 
+        for (int y = 0; y < World.heigth; y++){
+            for (int x = 0; x < World.width; x++){
+                System.out.print(map[x][y]);
+                if (map[x][y] < 10){
+                    System.out.print("  ");
+                } else {
+                    System.out.print(" ");
+                }
+            }
+            System.out.print("\n");
+        }
+
         return convertMap(map);
-    }
+    }                                                         // generates the World depending on the seed
 
     private int splitseed(String seed) {
         ArrayList<Integer> digits = new ArrayList<>();
@@ -95,7 +107,7 @@ public class GenerateWorld {
             }
         }
         return size;
-    }
+    }                                                                            // converts the String seed into an Arraylist of Bioms and returns the width of the map
 
     private void createLandscape() {
         int start = 0;
@@ -135,7 +147,7 @@ public class GenerateWorld {
 
             start = end;
         }
-    }
+    }                                                                                // generates the Landscape of the map
 
     private void calculateResourceNumbers() {
         numberiron = width / 15;
@@ -143,7 +155,7 @@ public class GenerateWorld {
         numbersilver = width / 40;
         numbergold = width / 70;
         numberdiamond = width / 100;
-    }
+    }                                                                       // calculates, how many ores have to be placed in the map depending on its size
 
     private Item[][] convertMap(int[][] imap){
         Item[][] itemmap = new Item[width][heigth];
@@ -181,7 +193,7 @@ public class GenerateWorld {
             }
         }
         return itemmap;
-    }
+    }                                                                      // converts the int[][] array into an Item[][] array
 
 
 
@@ -191,7 +203,7 @@ public class GenerateWorld {
         for (int x = start; x < end; x++) {
             fillStandard(x);
         }
-    }
+    }                                                                  // creates the ocean landscape with water and sand instead of dirt
 
     private void createFlatland(int start, int end) {
         int groundlevel = waterlevel - 15;
@@ -207,7 +219,7 @@ public class GenerateWorld {
 
             fillStandard(x);
         }
-    }
+    }                                                               // creates a flat landscape with only a little unevenness
 
     private void createHills(int start, int end) {
         int groundlevel = waterlevel - 30;
@@ -227,7 +239,7 @@ public class GenerateWorld {
 
             fillStandard(x);
         }
-    }
+    }                                                                  // creates a hilly landscape
 
     private void createMountains(int start, int end) {
         int groundlevel = waterlevel - 50;
@@ -251,7 +263,7 @@ public class GenerateWorld {
 
             fillStandard(x);
         }
-    }
+    }                                                              // creates a mountainous landscape with uncovered rock sides
 
     private void createDesert(int start, int end) {
         int groundlevel = waterlevel - 20;
@@ -268,7 +280,7 @@ public class GenerateWorld {
 
             fillDesert(x, sandheigth);
         }
-    }
+    }                                                                 // creates a desert landscape with sand instead of dirt
 
     private void createStandardLandscape(int start, int end) {
         int groundlevel = waterlevel - 20;
@@ -278,7 +290,7 @@ public class GenerateWorld {
         for (int x = start; x < end; x++) {
             fillStandard(x);
         }
-    }
+    }                                                      // creates a completely flat default landscape
 
 
 
@@ -334,7 +346,7 @@ public class GenerateWorld {
         }
 
         return start;
-    }
+    }                                                               // for the transition between standard landscapes
 
     private int transitionMountains(int start, int id) {
         int targeth = waterlevel - 50;
@@ -350,7 +362,7 @@ public class GenerateWorld {
         }
 
         return start;
-    }
+    }                                                            // for the transition to a mountain landscape
 
     private int transitionDesert(int start, int id) {
         int targeth = waterlevel - 20;
@@ -416,7 +428,7 @@ public class GenerateWorld {
         }
 
         return start;
-    }
+    }                                                               // for the transition to a desert landscape
 
 
 
@@ -441,7 +453,7 @@ public class GenerateWorld {
             }
             start += b.size;
         }
-    }
+    }                                                                             // places trees randomly to flatland and hills
 
     private void placeTrees(int start, int end, int number) {
         start += 5;
@@ -484,7 +496,7 @@ public class GenerateWorld {
                 }
             }
         }
-    }
+    }                                                       // place a number of trees between a given area
 
     private void placeWater(int start, int end, int number) {
         while (number != 0) {
@@ -499,7 +511,7 @@ public class GenerateWorld {
 
             number--;
         }
-    }
+    }                                                       // place a number of small waterholes between a given area
 
     private void placePlants(int start, int end, int number, int id) {
         while (number != 0) {
@@ -514,7 +526,7 @@ public class GenerateWorld {
 
             number--;
         }
-    }
+    }                                              // place a number of plants between a given area
 
     private void placeOre(int number, int oreid) {
         Random random = new Random();
@@ -576,7 +588,7 @@ public class GenerateWorld {
                 }
             }
         }
-    }
+    }                                                                  // place a number of ores in the rock of the map
 
 
 
@@ -588,13 +600,15 @@ public class GenerateWorld {
                 map[x][y] = 1;
             } else if (y > acth && acth >= waterlevel) {
                 map[x][y] = 11;
+            } else if (y == waterlevel + 1){
+                map[x][y] = 26;
             } else if (y > waterlevel) {
                 map[x][y] = 10;
             } else {
                 map[x][y] = 0;
             }
         }
-    }
+    }                                                                              // places the blocks onto the map depending on the given x-height(transition between sky and land)
 
     private void fillDesert(int x, int sandheigth) {
         for (int y = 0; y < heigth; y++) {
@@ -602,13 +616,15 @@ public class GenerateWorld {
                 map[x][y] = 2;
             } else if (y > acth){
                 map[x][y] = 11;
-            } else if (y > waterlevel){
+            } else if (y == waterlevel + 1) {
+                map[x][y] = 26;
+            }  else if (y > waterlevel){
                 map[x][y] = 10;
             } else {
                 map[x][y] = 0;
             }
         }
-    }                                                                //
+    }                                                                // places the blocks onto the map depending on the given x-height for the desert( no dirt, instead sand)
 
 
 

@@ -9,7 +9,7 @@ public class World {
     public Item[][] map;  //--------------------------------------------------------------------------------------------- Größenzuweisung entfernen
 
     public void generateWorld() {
-        String seed = "assjh";
+        String seed = "10111015";
 
         GenerateWorld generateWorld = new GenerateWorld();
         map = generateWorld.createWorld(seed, heigth);
