@@ -1,13 +1,26 @@
-Block-ID        Block-Art		Mining-Level
+Block-ID        Block-Art		Mining-Level		Attackpower
 0               air			0
-1               dirt			21
-2               stone			3
-3               wood			22
-4               iron-ore		3
-5               copper-ore		3
-6		silver-ore		3
+1               dirt			1
+2               stone			2
+3               wood			5
+4               iron-ore		2
+5               copper-ore		2
+6		silver-ore		2
 7               gold-ore		3
-8               diamond			10
-9		leaves			23
-10		water			24
-11		sand			21
+8               diamond			4
+9		leaves			1
+10		water			0
+11		sand			1
+12		Pickaxe			2			10
+13		Stronger Pickaxe	3			10
+14		Strongest Pickaxe	4			10
+15		Axe			5			20
+16		Sword			1			20
+
+20		Plant			1
+21		Chair			1
+22		Desk			1
+23		Door			1
+24		Campfire		1
+25		Furnance		1
+26		Water Surface		0
