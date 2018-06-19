@@ -6,9 +6,10 @@ Aufbau eines Seeds:
 	- die Integer, welche aus mehr als einer Ziffer bestehen, werden wiederum in ihre einzelnen Ziffern aufgespallten
 	- daraus ergibt sich dann eine ArrayList aus einzelnen Ziffern
 	... 9 8 7 6 5 4 3 2 1 0
-	- Immer zwei Ziffern gehören zu einem Biom (z.B. 10, 32, 54).
-	- Die erste Ziffer eines Blockes gibt die Art des Biomes an(z.B. 0, 2).
-	- Die zweite Ziffer * 100 gibt die größe des Bioms an (z.B. 1 = 100, 3 = 300, 8 = 800)
+	- Immer zwei Ziffern gehören zu einem Biom (z.B. 98, 76, 54).
+	- Der Seed wird von links nach rechts gelesen.
+	- Die erste Ziffer eines Blockes gibt die Art des Biomes an(z.B. 9, 5).
+	- Die zweite Ziffer * 100 gibt die größe des Bioms an (z.B. 4 = 400, 3 = 300, 8 = 800)
 
 
 Biom-ID: 
