@@ -57,6 +57,8 @@ public class World{
 	boolean attackright=false;
 	int attackCount = 0;
 	
+	Monster[] monsters = new Monster[6];
+	
 	//Guter Alter Sounds//////
 	int inventorySound = 0;
 	//////////////////////////
@@ -101,6 +103,7 @@ public class World{
 		group.getChildren().add(canvas);
 		
 		Scene scene = new Scene(group, 800, 600);
+		stage.setResizable(false);
 		
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		
@@ -154,7 +157,7 @@ public class World{
 				left = true;
 				
 				
-				//charakter animation
+				//Charakter animation
 				if (motion < 2) {
 					gc.drawImage(draw.loadCharTexture(1), ((int) (scene.getWidth()/30))*15, ((int) (scene.getHeight()/30))*15);
 					motion++;
@@ -263,9 +266,13 @@ public class World{
 				}
 				
 				//Monster
-				if (monster != null) {
-					for (int i = 0; i < monster.length; i++) {
-						//System.out.println("TADAAA I'M A MONSTER!");
+				for (int i = 0; i < monsters.length; i++) {
+					if (monsters[i] != null) {
+						if (hero.getxCoord() - (int)scene.getWidth()/30 < monsters[i].getxCoord() && hero.getxCoord() + (int)scene.getWidth()/30 > monsters[i].getxCoord()) {
+							int x_monster = (monsters[i].getxCoord() - (int) (xChar-(scene.getWidth()/30))) * 15;
+							int y_monster = (monsters[i].getyCoord() - (int) (yChar-(scene.getHeight()/30))) * 15;
+							gc.drawImage(draw.loadMonsterTexture(), x_monster, y_monster);
+						}
 					}
 				}
 			}
@@ -276,24 +283,35 @@ public class World{
 		//////////Tag/Nacht Zyklus///////////////////////////////////////////////////////
 		
 		class DayTimer extends Thread{
+			
+			Random random = new Random();
+			
 			@Override
 			public void run(){
 				while(true){
 					try {
-						Thread.sleep(60*1000);
+						Thread.sleep(10*1000);
 					} catch (InterruptedException e) {
 					}
 					if (dayTime == 0) {
 						dayTime = 1;
-						if (monster == null) {
-							monster = control.createMonster();
+						for (int i = 0; i < monsters.length; i++) {
+							if (monsters[i] == null) {
+								int x = random.nextInt((hero.getxCoord()+40) - (hero.getxCoord() - 40)) + (hero.getxCoord() - 40);
+								monsters[i] = control.createMonster(x, playerSpawn(x));
+								System.out.println(monsters[i].getxCoord() + " " + monsters[i].getyCoord());
+							}
 						}
+						System.out.println(hero.getxCoord() + " " + hero.getyCoord());
 					}
 					else {
 						dayTime = 0;
-						if (monster != null) {
-							monster = null;
-						}
+						/*for (int i = 0; i < monsters.length; i++) {
+							if (monsters[i] != null) {
+								monsters[i].die();
+								monster[i] = null;
+							}
+						}*/
 					}
 				}
 			}
@@ -557,7 +575,7 @@ public class World{
 						holdItemIdCount = inventory[ix].getSize();
 					}
 					else {
-						timer.schedule(timerTask, 500);
+						timer.schedule(timerTask, 200);
 					}
 					
 					scene.setOnMouseReleased(new EventHandler<MouseEvent>() {
@@ -642,7 +660,7 @@ public class World{
 	private int playerSpawn(int x){
 		int y = 0;
 		for (int i = 0; i < heigth; i++) {
-			if (map[x][i].getID() == 1) {
+			if (map[x][i].getID() != 0) {
 				y = i-3;
 				i = heigth;
 			}

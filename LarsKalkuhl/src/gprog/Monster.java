@@ -10,4 +10,8 @@ public class Monster extends Creature{
 	        setyVel(0);
 	        setHealth(100);
 	    }
+	   
+	   public void die(){
+		   
+	   }
 }

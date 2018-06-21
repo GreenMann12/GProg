@@ -11,6 +11,7 @@ public class Draw {
 	private Image charakter[] = new Image[3];
 	private Image inventory[] = new Image[2];
 	private Image sword[] = new Image[2];
+	private Image monster;
 	
 	public Draw(){
 		//nacht
@@ -57,6 +58,8 @@ public class Draw {
 				sword[i] = null;
 			}
 		}
+		//monster
+		monster = new Image(Draw.class.getResourceAsStream("../image/monster.png"), 30, 45, false, false);
 	}
 	
 	///////Bekommen der einzelnen Bilder////////////////////////////////////////////// 
@@ -103,4 +106,9 @@ public class Draw {
 	public Image loadSwordTexture(int id){
 		return sword[id];
 	}
+	
+	public Image loadMonsterTexture(){
+		return monster;
+	}
+	
 }

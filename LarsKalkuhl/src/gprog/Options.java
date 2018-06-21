@@ -34,7 +34,7 @@ public class Options{
 		border.setTop(l_gameName);
 		border.setAlignment(l_gameName, Pos.CENTER);
 		border.setMargin(l_gameName, new Insets(50,10,10,0));
-		stage.setResizable(true);
+		//stage.setResizable(true);
 
 		VBox vbox = new VBox();
 		visuals = new Button("Visuals");
@@ -83,7 +83,7 @@ class Visuals {
 		border.setTop(l_gameName);
 		border.setAlignment(l_gameName, Pos.CENTER);
 		border.setMargin(l_gameName, new Insets(50,10,10,0));
-		stage.setResizable(true);
+		//stage.setResizable(true);
 
 
 		VBox vbox = new VBox();
@@ -122,16 +122,19 @@ class Visuals {
 			@Override
 			public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
 				if (smallSize.isSelected()) {
-					stage.setWidth(816);
-					stage.setHeight(638);
+					stage.setWidth(806);
+					stage.setHeight(628);
+					stage.setResizable(false);
 				}
 				else if (mediumSize.isSelected()) {
-					stage.setWidth(1016);
-					stage.setHeight(788);
+					stage.setWidth(1006);
+					stage.setHeight(778);
+					stage.setResizable(false);
 				}
 				else if (bigSize.isSelected()) {
-					stage.setWidth(1116);
-					stage.setHeight(848);
+					stage.setWidth(1106);
+					stage.setHeight(838);
+					stage.setResizable(false);
 				}
 			}
 		});
@@ -158,7 +161,7 @@ class Sound {
 		border.setTop(l_gameName);
 		border.setAlignment(l_gameName, Pos.CENTER);
 		border.setMargin(l_gameName, new Insets(50,10,10,0));
-		stage.setResizable(true);
+		//stage.setResizable(true);
 
 
 		VBox vbox = new VBox();
