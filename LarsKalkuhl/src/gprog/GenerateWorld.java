@@ -30,7 +30,7 @@ public class GenerateWorld {
         width = splitseed(seed);
         map = new int[width][heigth];
 
-        System.out.print(width + " " + heigth);
+        System.out.println(width + " " + heigth);
 
         World.width = width;
 
@@ -55,17 +55,8 @@ public class GenerateWorld {
         // place Trees
         placeRandomlyTrees();
 
-        for (int y = 0; y < World.heigth; y++){
-            for (int x = 0; x < World.width; x++){
-                System.out.print(map[x][y]);
-                if (map[x][y] < 10){
-                    System.out.print("  ");
-                } else {
-                    System.out.print(" ");
-                }
-            }
-            System.out.print("\n");
-        }
+        // place small puddles
+        placeRandomlyWater();
 
         return convertMap(map);
     }                                                         // generates the World depending on the seed
@@ -74,7 +65,7 @@ public class GenerateWorld {
         ArrayList<Integer> digits = new ArrayList<>();
         int size = 0;
 
-        if (seed.length() < 2){
+        if (seed.length() < 2) {
             seed = randomString();
         }
 
@@ -157,44 +148,59 @@ public class GenerateWorld {
         numberdiamond = width / 100;
     }                                                                       // calculates, how many ores have to be placed in the map depending on its size
 
-    private Item[][] convertMap(int[][] imap){
+    private Item[][] convertMap(int[][] imap) {
         Item[][] itemmap = new Item[width][heigth];
 
-        for (int x = 0; x < width; x++){
-            for (int y = 0; y < heigth; y++){
-                switch (imap[x][y]){
-                    case 0: itemmap[x][y] = new Air();
-                            break;
-                    case 1: itemmap[x][y] = new Dirt();
-                            break;
-                    case 2: itemmap[x][y] = new Stone();
-                            break;
-                    case 3: itemmap[x][y] = new Wood();
-                            break;
-                    case 4: itemmap[x][y] = new IronOre();
-                            break;
-                    case 5: itemmap[x][y] = new CooperOre();
-                            break;
-                    case 6: itemmap[x][y] = new SilverOre();
-                            break;
-                    case 7: itemmap[x][y] = new GoldOre();
-                            break;
-                    case 8: itemmap[x][y] = new Diamond();
-                            break;
-                    case 9: itemmap[x][y] = new Leaves();
-                            break;
-                    case 10: itemmap[x][y] = new Water();
-                            break;
-                    case 11: itemmap[x][y] = new Sand();
-                            break;
-                    default: itemmap[x][y] = new Air();
-                            break;
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < heigth; y++) {
+                switch (imap[x][y]) {
+                    case 0:
+                        itemmap[x][y] = new Air();
+                        break;
+                    case 1:
+                        itemmap[x][y] = new Dirt();
+                        break;
+                    case 2:
+                        itemmap[x][y] = new Stone();
+                        break;
+                    case 3:
+                        itemmap[x][y] = new Wood();
+                        break;
+                    case 4:
+                        itemmap[x][y] = new IronOre();
+                        break;
+                    case 5:
+                        itemmap[x][y] = new CooperOre();
+                        break;
+                    case 6:
+                        itemmap[x][y] = new SilverOre();
+                        break;
+                    case 7:
+                        itemmap[x][y] = new GoldOre();
+                        break;
+                    case 8:
+                        itemmap[x][y] = new Diamond();
+                        break;
+                    case 9:
+                        itemmap[x][y] = new Leaves();
+                        break;
+                    case 10:
+                        itemmap[x][y] = new Water();
+                        break;
+                    case 11:
+                        itemmap[x][y] = new Sand();
+                        break;
+                    case 26:
+                        itemmap[x][y] = new WaterSurface();
+                        break;
+                    default:
+                        itemmap[x][y] = new Air();
+                        break;
                 }
             }
         }
         return itemmap;
     }                                                                      // converts the int[][] array into an Item[][] array
-
 
 
     private void createOcean(int start, int end) {
@@ -293,8 +299,7 @@ public class GenerateWorld {
     }                                                      // creates a completely flat default landscape
 
 
-
-    private int transition(int start, int targeth ) {
+    private int transition(int start, int targeth) {
         int starth = acth;
 
         if (start == 0) {
@@ -302,17 +307,17 @@ public class GenerateWorld {
         } else {
             if (acth > targeth) {
                 while (acth > targeth && start < World.width) {
-                    if (Math.abs(starth - acth)<=2){
+                    if (Math.abs(starth - acth) <= 2) {
                         if (start % 2 == 0) {
                             acth--;
                         }
-                    } else if (Math.abs(acth - targeth)<=2){
-                        if (start % 2 == 0){
+                    } else if (Math.abs(acth - targeth) <= 2) {
+                        if (start % 2 == 0) {
                             acth--;
                         }
-                    } else if (Math.abs(starth - acth)<=5){
+                    } else if (Math.abs(starth - acth) <= 5) {
                         acth--;
-                    } else if (Math.abs(acth - targeth) <=5){
+                    } else if (Math.abs(acth - targeth) <= 5) {
                         acth--;
                     } else {
                         acth -= 2;
@@ -323,17 +328,17 @@ public class GenerateWorld {
                 }
             } else if (acth < targeth) {
                 while (acth < targeth && start < World.width) {
-                    if (Math.abs(starth - acth)<=2){
+                    if (Math.abs(starth - acth) <= 2) {
                         if (start % 2 == 0) {
                             acth++;
                         }
-                    } else if (Math.abs(acth - targeth)<=2){
-                        if (start % 2 == 0){
+                    } else if (Math.abs(acth - targeth) <= 2) {
+                        if (start % 2 == 0) {
                             acth++;
                         }
-                    } else if (Math.abs(starth - acth)<=5){
+                    } else if (Math.abs(starth - acth) <= 5) {
                         acth++;
-                    } else if (Math.abs(acth - targeth) <=5){
+                    } else if (Math.abs(acth - targeth) <= 5) {
                         acth++;
                     } else {
                         acth += 2;
@@ -346,7 +351,7 @@ public class GenerateWorld {
         }
 
         return start;
-    }                                                               // for the transition between standard landscapes
+    }                                                                // for the transition between standard landscapes
 
     private int transitionMountains(int start, int id) {
         int targeth = waterlevel - 50;
@@ -374,20 +379,20 @@ public class GenerateWorld {
         } else if (id != 4) {
             if (acth > targeth) {
                 while (acth > targeth && start < World.width) {
-                    if (Math.abs(starth - acth)<=2){
+                    if (Math.abs(starth - acth) <= 2) {
                         sandheight = 2;
                         if (start % 2 == 0) {
                             acth--;
                         }
-                    } else if (Math.abs(acth - targeth)<=2){
+                    } else if (Math.abs(acth - targeth) <= 2) {
                         sandheight = 9;
-                        if (start % 2 == 0){
+                        if (start % 2 == 0) {
                             acth--;
                         }
-                    } else if (Math.abs(starth - acth)<=5){
+                    } else if (Math.abs(starth - acth) <= 5) {
                         sandheight = 4;
                         acth--;
-                    } else if (Math.abs(acth - targeth) <=5){
+                    } else if (Math.abs(acth - targeth) <= 5) {
                         sandheight = 8;
                         acth--;
                     } else {
@@ -400,20 +405,20 @@ public class GenerateWorld {
                 }
             } else if (acth < targeth) {
                 while (acth < targeth && start < World.width) {
-                    if (Math.abs(starth - acth)<=2){
+                    if (Math.abs(starth - acth) <= 2) {
                         sandheight = 2;
                         if (start % 2 == 0) {
                             acth++;
                         }
-                    } else if (Math.abs(acth - targeth)<=2){
+                    } else if (Math.abs(acth - targeth) <= 2) {
                         sandheight = 9;
-                        if (start % 2 == 0){
+                        if (start % 2 == 0) {
                             acth++;
                         }
-                    } else if (Math.abs(starth - acth)<=5){
+                    } else if (Math.abs(starth - acth) <= 5) {
                         sandheight = 4;
                         acth++;
-                    } else if (Math.abs(acth - targeth) <=5){
+                    } else if (Math.abs(acth - targeth) <= 5) {
                         sandheight = 8;
                         acth++;
                     } else {
@@ -431,7 +436,6 @@ public class GenerateWorld {
     }                                                               // for the transition to a desert landscape
 
 
-
     private void placeRandomlyTrees() {
         int start = 0;
         int end = 0;
@@ -443,11 +447,17 @@ public class GenerateWorld {
 
                 number = 0;
 
-                if (probability == 0) {                                                                                  // a few trees in the biom
-                    number = b.size * 25 / 100;
+                if (probability == 0) {                                                                                  // many trees in the biom
+                    number = b.size * 30 / 100;
                 } else if (probability == 1 || probability == 2) {                                                       // a few trees in the biom
-                    number = b.size * 3 / 100;
+                    number = b.size * 5 / 100;
                 }
+
+                placeTrees(start, end, number);
+            } else if (b.biomID >= 5){
+                end = start + b.size;
+
+                number = b.size * 5 / 100;
 
                 placeTrees(start, end, number);
             }
@@ -498,18 +508,52 @@ public class GenerateWorld {
         }
     }                                                       // place a number of trees between a given area
 
+    private void placeRandomlyWater() {
+        int start = 0;
+        int end = 0;
+        int number = 0;
+        int maxnumber = 0;
+        for (Biom b : bioms) {
+            if (b.size > 0) {
+                if (b.biomID == 4) {
+                    end = start + b.size;
+
+                    maxnumber = b.size * 2 / 100;
+
+                    number = random.nextInt(maxnumber);
+
+                    placeWater(start, end, number);
+                } else if (b.biomID == 1 || b.biomID == 2 || b.biomID >= 5) {
+                    end = start + b.size;
+
+                    maxnumber = b.size * 7 / 100;
+
+                    number = random.nextInt(maxnumber);
+
+                    placeWater(start, end, number);
+                }
+
+                start += b.size;
+            }
+        }
+    }                                                                             // place puddles randomly over the map
+
     private void placeWater(int start, int end, int number) {
         while (number != 0) {
             int x = newRandom(start, end);
             int y = 0;
 
-            while (y < heigth && map[x][y] == 0) {
+            while (y < heigth && (map[x][y] == 0 || map[x][y] == 9)) {
                 y++;
             }
 
-            map[x][y] = 10;
+            if (map[x][y] == 1 || map[x][y] == 11){
+                if (map[x-1][y] != 0 && map[x+1][y] != 0) {
+                    map[x][y] = 26;
 
-            number--;
+                    number--;
+                }
+            }
         }
     }                                                       // place a number of small waterholes between a given area
 
@@ -591,7 +635,6 @@ public class GenerateWorld {
     }                                                                  // place a number of ores in the rock of the map
 
 
-
     private void fillStandard(int x) {
         for (int y = 0; y < heigth; y++) {
             if (y > acth + ground || (y > acth && y < 60)) {
@@ -600,7 +643,7 @@ public class GenerateWorld {
                 map[x][y] = 1;
             } else if (y > acth && acth >= waterlevel) {
                 map[x][y] = 11;
-            } else if (y == waterlevel + 1){
+            } else if (y == waterlevel + 1) {
                 map[x][y] = 26;
             } else if (y > waterlevel) {
                 map[x][y] = 10;
@@ -612,13 +655,13 @@ public class GenerateWorld {
 
     private void fillDesert(int x, int sandheigth) {
         for (int y = 0; y < heigth; y++) {
-            if (y > acth + sandheigth){
+            if (y > acth + sandheigth) {
                 map[x][y] = 2;
-            } else if (y > acth){
+            } else if (y > acth) {
                 map[x][y] = 11;
             } else if (y == waterlevel + 1) {
                 map[x][y] = 26;
-            }  else if (y > waterlevel){
+            } else if (y > waterlevel) {
                 map[x][y] = 10;
             } else {
                 map[x][y] = 0;
@@ -627,14 +670,13 @@ public class GenerateWorld {
     }                                                                // places the blocks onto the map depending on the given x-height for the desert( no dirt, instead sand)
 
 
-
-    private boolean checkworldsize(ArrayList<Integer> seed){
+    private boolean checkworldsize(ArrayList<Integer> seed) {
         int size = 0;
-        for (int i = 0; i < seed.size(); i += 2){
+        for (int i = 0; i < seed.size(); i += 2) {
             size += seed.get(i);
         }
 
-        if (size >= 4){
+        if (size >= 4) {
             return true;
         } else {
             return false;
@@ -644,9 +686,8 @@ public class GenerateWorld {
     private String randomString() {
         final int STRING_LENGTH = 4;
         StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < STRING_LENGTH; i++)
-        {
-            sb.append((char)((int)(Math.random()*26)+97));
+        for (int i = 0; i < STRING_LENGTH; i++) {
+            sb.append((char) ((int) (Math.random() * 26) + 97));
         }
         return sb.toString();
     }                                                                                 // creates a random String

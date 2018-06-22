@@ -1,5 +1,6 @@
 package gprog;
 
+import java.awt.Robot;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -58,6 +59,9 @@ public class World{
 	int attackCount = 0;
 	
 	Monster[] monsters = new Monster[6];
+	private Robot robot;
+	private Scene worldScene;
+	private boolean pushed = false;
 	
 	//Guter Alter Sounds//////
 	int inventorySound = 0;
@@ -70,6 +74,10 @@ public class World{
 	
 	public World(Stage stage, Control control, Save savefile){
 		this.control = control;
+		try {
+            robot = new Robot();
+        } catch (Exception e) {
+        }
 		inventory = control.getInventory();
 		loading(stage);
 		if (savefile == null) {
@@ -103,6 +111,7 @@ public class World{
 		group.getChildren().add(canvas);
 		
 		Scene scene = new Scene(group, 800, 600);
+		worldScene = scene;
 		stage.setResizable(false);
 		
 		GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -136,7 +145,12 @@ public class World{
 							gc.drawImage(draw.loadNightTexture(), koordX, koordY);
 						}
 						else{
-							gc.drawImage(draw.loadBlockTexture(map[w][h].getID()), koordX, koordY);
+							if (map[w][h].getID() == 26) {
+								gc.drawImage(draw.loadBlockTexture(10), koordX, koordY);
+							}
+							else {
+								gc.drawImage(draw.loadBlockTexture(map[w][h].getID()), koordX, koordY);
+							}
 						}
 						koordY += 15;
 					}
@@ -153,8 +167,11 @@ public class World{
 				}
 				
 				updateHero(direction);
-				right = true;
-				left = true;
+				 if (pushed) robot.keyRelease(65);
+	             if (pushed) robot.keyRelease(68);
+	             pushed = false;
+	             right = true;
+	             left = true;
 				
 				
 				//Charakter animation
@@ -265,7 +282,8 @@ public class World{
 					}
 				}
 				
-				//Monster
+				//Monster/////////////////////////////////////////////////////////////////////////
+				
 				for (int i = 0; i < monsters.length; i++) {
 					if (monsters[i] != null) {
 						if (hero.getxCoord() - (int)scene.getWidth()/30 < monsters[i].getxCoord() && hero.getxCoord() + (int)scene.getWidth()/30 > monsters[i].getxCoord()) {
@@ -297,21 +315,27 @@ public class World{
 						dayTime = 1;
 						for (int i = 0; i < monsters.length; i++) {
 							if (monsters[i] == null) {
-								int x = random.nextInt((hero.getxCoord()+40) - (hero.getxCoord() - 40)) + (hero.getxCoord() - 40);
-								monsters[i] = control.createMonster(x, playerSpawn(x));
-								System.out.println(monsters[i].getxCoord() + " " + monsters[i].getyCoord());
+								int x1 = random.nextInt(30) + (hero.getxCoord() + 20);
+								int x2 = random.nextInt(30) + (hero.getxCoord() - 50);
+								if (i % 2 == 0) {
+									monsters[i] = control.createMonster(x1, playerSpawn(x1));
+								}
+								else{
+									monsters[i] = control.createMonster(x2, playerSpawn(x2));
+								}
+								//System.out.println(monsters[i].getxCoord() + " " + monsters[i].getyCoord());
 							}
 						}
 						System.out.println(hero.getxCoord() + " " + hero.getyCoord());
 					}
 					else {
-						dayTime = 0;
-						/*for (int i = 0; i < monsters.length; i++) {
+						for (int i = 0; i < monsters.length; i++) {
 							if (monsters[i] != null) {
 								monsters[i].die();
-								monster[i] = null;
+								monsters[i] = null;
 							}
-						}*/
+						}
+						dayTime = 0;
 					}
 				}
 			}
@@ -521,15 +545,55 @@ public class World{
 				
 				//abbauen der Blöcke
 				if (event.getButton() == MouseButton.PRIMARY && menuOpen == false) {
+					Random random = new Random();
 					
 					if (inventory[inventoryPos].getID() == 16) {
 						if (event.getSceneX() >= (int) (scene.getWidth()/30)*15) {
 							attackright = true;
 							attackCount = 0;
+							for (int i = 0; i < monsters.length; i++) {
+								if (monsters[i] != null) {
+									if (monsters[i].getxCoord() >= hero.getxCoord() && monsters[i].getxCoord() <= hero.getxCoord() + 4) {
+										monsters[i].setHealth(monsters[i].getHealth() - 50);
+										if (monsters[i].getHealth() <= 0) {
+											monsters[i].die();
+											monsters[i] = null;
+											int x1 = random.nextInt(30) + (hero.getxCoord() + 20);
+											int x2 = random.nextInt(30) + (hero.getxCoord() - 50);
+											if (i % 2 == 0) {
+												monsters[i] = control.createMonster(x1, playerSpawn(x1));
+											}
+											else{
+												monsters[i] = control.createMonster(x2, playerSpawn(x2));
+											}
+								}
+							}
+							}
+							}
 						}
 						else{
 							attackleft = true;
 							attackCount = 0;
+							for (int i = 0; i < monsters.length; i++) {
+								if (monsters[i] != null) {
+									if (monsters[i].getxCoord() <= hero.getxCoord() && monsters[i].getxCoord() >= hero.getxCoord() - 3) {
+										monsters[i].setHealth(monsters[i].getHealth() - 50);
+										if (monsters[i].getHealth() <= 0) {
+											monsters[i].die();
+											monsters[i] = null;
+											int x1 = random.nextInt(30) + (hero.getxCoord() + 20);
+											int x2 = random.nextInt(30) + (hero.getxCoord() - 50);
+											if (i % 2 == 0) {
+												monsters[i] = control.createMonster(x1, playerSpawn(x1));
+											}
+											else{
+												monsters[i] = control.createMonster(x2, playerSpawn(x2));
+											}
+										}
+									}
+								}
+								
+							}
 						}
 					}
 					else{
@@ -551,11 +615,11 @@ public class World{
 										control.inventoryAddItem(map[x][y]);
 										map[x][y] = new Air();
 										inventory = control.getInventory();
-										System.out.println((int) (event.getSceneX()) + "  und  " + (int) (event.getSceneY()));
-										System.out.println(x+ "  und  " + y);
-										System.out.println(hero.getxCoord()+ "  und  " + hero.getyCoord());
-										System.out.println(scene.getHeight());
-										System.out.println("------------------------------------");
+										//System.out.println((int) (event.getSceneX()) + "  und  " + (int) (event.getSceneY()));
+										//System.out.println(x+ "  und  " + y);
+										//System.out.println(hero.getxCoord()+ "  und  " + hero.getyCoord());
+										//System.out.println(scene.getHeight());
+										//System.out.println("------------------------------------");
 									}
 								}
 							}
@@ -640,12 +704,33 @@ public class World{
 			}
 		}
 
-						hero.setxCoord(hero.getxCoord() + hero.getxVel());
-						hero.setyCoord(hero.getyCoord() + hero.getyVel() + hero.getyGravity());
-					}
+		hero.setxCoord(hero.getxCoord() + hero.getxVel());
+		hero.setyCoord(hero.getyCoord() + hero.getyVel() + hero.getyGravity());
+	}
 	
-	private boolean checkColl(int x, int y) {
-		if (map[x][y].getID() == 0 || map[x][y].getID() == 3 || map[x][y].getID() == 10 || map[x][y].getID() == 9) {
+	public void updateMonster(Monster m,int r){
+
+        if (r == 1) {
+            if (!checkColl(m.getxCoord() - 2, m.getyCoord()) || !checkColl(m.getxCoord() - 2, m.getyCoord() + 1) || !checkColl(m.getxCoord() - 2, m.getyCoord() + 2))
+            {
+                m.setxVel(0);
+                m.left= false;
+            }
+        }
+        else if (r==2) {
+            if (!checkColl(m.getxCoord() + 1, m.getyCoord()) || !checkColl(m.getxCoord() + 1, m.getyCoord() + 1) || !checkColl(m.getxCoord() + 1, m.getyCoord() + 2))
+            {
+                m.setxVel(0);
+                m.right= false;
+            }
+
+        }
+        m.setxCoord(m.getxCoord()+m.getxVel());
+        m.setyCoord(m.getyCoord()+m.getyVel()+m.getyGravity());
+    }
+
+	public boolean checkColl(int x, int y) {
+		if (map[x][y].getID() == 0 || map[x][y].getID() == 3 || map[x][y].getID() == 10 || map[x][y].getID() == 9 || map[x][y].getID() == 26) {
 
 			return true;
 		} else {
@@ -655,9 +740,23 @@ public class World{
 
 	}
 	
+	/////////////Monster Robor//////////////////////////////////
+	
+	public void monsterRobot(int key){
+		robot.keyPress(key);
+	}
+	
+	public double getSceneXwidth(){
+		return worldScene.getWidth();
+	}
+	
+	public void setPushed(boolean p){
+		pushed = p;
+	}
+	
 	///////Spawnpunkt des Spielers zu Begin eines neuen Spiels//////////////////////////////////////////////
 	
-	private int playerSpawn(int x){
+	public int playerSpawn(int x){
 		int y = 0;
 		for (int i = 0; i < heigth; i++) {
 			if (map[x][i].getID() != 0) {

@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Random;
 
 import gprog.Items.Item;
 import javafx.scene.control.Alert;
@@ -128,7 +129,7 @@ public class Control {
 	
 	//////Monster erstellen//////////////////////////////////////////////////////////////////
 	public Monster createMonster(int x, int y){
-		return new Monster(x,y);
+		return new Monster(x,y, world);
 	}
 	
 	///////Inventar Position//////////////////////////////////////////////////////////////
