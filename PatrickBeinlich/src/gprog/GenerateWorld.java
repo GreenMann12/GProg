@@ -549,7 +549,7 @@ public class GenerateWorld {
 
             if (map[x][y] == 1 || map[x][y] == 11){
                 if (map[x-1][y] != 0 && map[x+1][y] != 0) {
-                    map[x][y] = 10;
+                    map[x][y] = 26;
 
                     number--;
                 }
