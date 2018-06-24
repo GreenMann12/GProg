@@ -59,5 +59,6 @@ Tool-ID         Tool-Art		    Mining-Level    AttackPower
 13              StrongerPickaxe     3               10
 14              StrongestPickaxe	4               10
 15              Axe			        5               20
+16				Sword				1				20
 
  */

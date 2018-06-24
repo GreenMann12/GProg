@@ -34,7 +34,7 @@ public class Options{
 		border.setTop(l_gameName);
 		border.setAlignment(l_gameName, Pos.CENTER);
 		border.setMargin(l_gameName, new Insets(50,10,10,0));
-		stage.setResizable(true);
+		//stage.setResizable(true);
 
 		VBox vbox = new VBox();
 		visuals = new Button("Visuals");
@@ -61,21 +61,22 @@ public class Options{
 
 		backToStart.setOnAction(ev -> title.setRoot(oldBorder));
 		visuals.setOnAction(ev -> new Visuals(border,stage, title));
-		sound.setOnAction(ev -> new Sound(border,stage,title));
+		sound.setOnAction(ev -> new Audio(border,stage,title));
 
 	}
-	
 }
 
 class Visuals {
 
 	final double fontSize = 30.0;
 
-	public Visuals(BorderPane oldBorder, Stage stage, Scene title)
-	{
+	public Visuals(BorderPane _oldBorder, Stage _stage, Scene _title) {
+
+		final BorderPane border2 = new BorderPane();
 		BorderPane border = new BorderPane();
-		
+
 		border.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
+		border2.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
 
 		Label l_gameName = new Label("NameEinesGames");
 
@@ -83,7 +84,10 @@ class Visuals {
 		border.setTop(l_gameName);
 		border.setAlignment(l_gameName, Pos.CENTER);
 		border.setMargin(l_gameName, new Insets(50,10,10,0));
-		stage.setResizable(true);
+		border2.setTop(l_gameName);
+		border2.setAlignment(l_gameName, Pos.CENTER);
+		border2.setMargin(l_gameName, new Insets(50,10,10,0));
+		_stage.setResizable(true);
 
 
 		VBox vbox = new VBox();
@@ -115,97 +119,46 @@ class Visuals {
 		vbox.setMargin(bigSize, new Insets(0,10,10,10));
 		vbox.setMargin(back, new Insets(0,10,10,0));
 		border.setCenter(vbox);
+		border2.setCenter(vbox);
 
-		title.setRoot(border);
+
+		/*mediumScene = new Scene(border,1006,778);
+		bigScene = new Scene(border,1200,810);*/
+
+		_title.setRoot(border);
+
 
 		toggle.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
 			@Override
 			public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
 				if (smallSize.isSelected()) {
-					stage.setWidth(800);
-					stage.setHeight(600);
+					_stage.setWidth(806);
+					_stage.setHeight(628);
+					_stage.setResizable(false);
 
+					//_stage.setScene(new Scene(border2,806,628));
 				}
 				else if (mediumSize.isSelected()) {
-					stage.setWidth(1000);
-					stage.setHeight(750);
+					_stage.setWidth(1006);
+					_stage.setHeight(778);
+					_stage.setResizable(false);
+
+					//_stage.setScene(new Scene(border2,1006,775));
 
 				}
 				else if (bigSize.isSelected()) {
-					stage.setWidth(1200);
-					stage.setHeight(810);
+					_stage.setWidth(1200);
+					_stage.setHeight(810);
+					_stage.setResizable(false);
+
+					//_stage.setScene(new Scene(border2,1200,810));
 				}
 			}
 		});
 
-		back.setOnAction(ev -> title.setRoot(oldBorder));
+
+
+		back.setOnAction(ev -> _title.setRoot(_oldBorder));
 	}
 }
 
-
-
-class Sound {
-
-	final double fontSize = 30.0;
-
-	public Sound(BorderPane oldBorder, Stage stage, Scene title)
-	{
-		BorderPane border = new BorderPane();
-
-		border.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
-
-		Label l_gameName = new Label("NameEinesGames");
-
-		l_gameName.setStyle("-fx-font: 36 arial;");
-		border.setTop(l_gameName);
-		border.setAlignment(l_gameName, Pos.CENTER);
-		border.setMargin(l_gameName, new Insets(50,10,10,0));
-		stage.setResizable(true);
-
-
-		VBox vbox = new VBox();
-		Label windowsSize = new Label("Music");
-		windowsSize.setFont(new Font(fontSize));
-		RadioButton soundOn = new RadioButton("On");
-		RadioButton soundOff = new RadioButton("Off");
-		Button back = new Button("<- Back");
-		soundOn.setBackground(null);
-		soundOff.setBackground(null);
-		final ToggleGroup toggle = new ToggleGroup();
-
-
-		soundOn.setToggleGroup(toggle);
-		soundOff.setToggleGroup(toggle);
-
-
-		back.setBackground(null);
-		soundOn.setStyle("-fx-font: 24 arial;");
-		soundOff.setStyle("-fx-font: 24 arial;");
-
-		back.setStyle("-fx-font: 24 arial;");
-		vbox.getChildren().addAll(windowsSize, soundOn,soundOff, back);
-		vbox.setAlignment(Pos.CENTER);
-		vbox.setMargin(soundOn, new Insets(0,10,10,10));
-		vbox.setMargin(soundOff, new Insets(0,10,10,10));
-		vbox.setMargin(back, new Insets(0,10,10,0));
-		border.setCenter(vbox);
-
-		title.setRoot(border);
-
-		toggle.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-			@Override
-			public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
-				if(soundOn.isSelected())
-				{
-					Audio.musicLoop("src/Audio/titleScreen.wav");
-				}
-				else if(soundOff.isSelected())
-				{
-					Audio.stopPlay();
-				}
-			}
-		});
-
-		back.setOnAction(ev -> title.setRoot(oldBorder));
-	}
-}

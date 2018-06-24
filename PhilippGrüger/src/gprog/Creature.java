@@ -8,6 +8,7 @@ public abstract class Creature {
 	private int yVel;
 	private int health;
 	private boolean canJump=true;
+	public int jumpCount=0;
 
 	private int yGravity;
 
