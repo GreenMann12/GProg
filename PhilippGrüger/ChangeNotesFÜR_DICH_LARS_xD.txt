@@ -1,0 +1,22 @@
+Changelog:
+titlescreen.java:
+-stage sizes
+Audio.java:
+-Changelistener -> clip.isActive()
+-Audio -> if(clip.isActive())
+-soundOn.setSelected(true);...
+-slider2 halbwegs zum laufen gebracht
+
+World.java:
+Walking left("A")
+-added Sounds of walking
+Walking right("D")
+-added Sound of walking
+Placing block
+-added sound of placing block
+Adding block to inventory
+-added sound of collection block
+Attack right
+-added sounds of sword sway, sword hit zombie, zombie killed
+Attack left
+-added sounds of sword sway, sword hit zombie, zombie killed
