@@ -2,17 +2,21 @@ Changelog:
 titlescreen.java:
 -stage sizes
 -scene sizes
+Funktioniert aber trotzdem nicht >_<
+
 Audio.java:
--Changelistener -> clip.isActive()
 -Audio -> if(clip.isActive())
--soundOn.setSelected(true);...
--slider2 halbwegs zum laufen gebracht
+soundOn.setSelected(true);...
+-slider2 halbwegs zum laufen gebracht :
+in Floatcontrol in Audio.musicloop() und in Audio.music()
+Visuals.java
+-if(_stage.getHeight() == ....) (kurz vor dem toggle Listener)
 
 World.java:
 Walking left("A")
--added Sounds of walking
+-added Sounds of walking(Diamond,Gold,Iron,Copper)
 Walking right("D")
--added Sound of walking
+-added Sound of walking(Diamond,Gold,Iron,Copper)
 Placing block
 -added sound of placing block
 Adding block to inventory
