@@ -13,11 +13,13 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 import java.io.File;
 import java.time.Duration;
 
@@ -28,7 +30,9 @@ import java.time.Duration;
 public class Audio {
 
     private static Clip clip;
-    static Slider slider2 = new Slider(0,1,0);
+    private static Clip clip2;
+    private static FloatControl control;
+    static Slider slider2 = new Slider(0.0001,2,0.80);
 
     public static void music(String track){
         String trackname = track;
@@ -48,6 +52,24 @@ public class Audio {
 
 
                                 clip.loop(0);
+
+                                FloatControl gainControl = (FloatControl) clip.getControl
+                                        (FloatControl.Type.MASTER_GAIN);
+                                double gain = slider2.getValue();
+                                float dB = (float) (Math.log(gain) / Math.log(10.0) * 20.0);
+                                System.out.println(dB);
+                                gainControl.setValue(dB);
+
+                                slider2.valueProperty().addListener(new ChangeListener<Number>() {
+                                    @Override
+                                    public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                                        double gain = slider2.getValue();
+                                        float dB = (float) (Math.log(gain) / Math.log(10.0) * 20.0);
+                                        System.out.println(dB);
+                                        gainControl.setValue(dB);
+
+                                    }
+                                });
                                 Thread.sleep(clip.getMicrosecondLength());
 
 
@@ -72,11 +94,35 @@ public class Audio {
                 while (true)
 
                 { try {
-                    clip = AudioSystem.getClip();
+                    clip2 = AudioSystem.getClip();
                     AudioInputStream inputstream = AudioSystem.getAudioInputStream(new File(trackname));
-                    clip.open(inputstream);
-                    clip.loop(Clip.LOOP_CONTINUOUSLY);
-                    Thread.sleep(clip.getMicrosecondLength());
+                    clip2.open(inputstream);
+                    clip2.loop(Clip.LOOP_CONTINUOUSLY);
+
+                    FloatControl gainControl = (FloatControl) clip2.getControl
+                            (FloatControl.Type.MASTER_GAIN);
+                    double gain = slider2.getValue();
+                    float dB = (float) (Math.log(gain) / Math.log(10.0) * 20.0);
+                    System.out.println(dB);
+                    gainControl.setValue(dB);
+
+                    slider2.valueProperty().addListener(new ChangeListener<Number>() {
+                        @Override
+                        public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                            double gain = slider2.getValue();
+                            float dB = (float) (Math.log(gain) / Math.log(10.0) * 20.0);
+                            System.out.println(dB);
+                            gainControl.setValue(dB);
+
+                        }
+                    });
+
+
+                    Thread.sleep(clip2.getMicrosecondLength());
+
+
+
+
                 }catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -92,9 +138,9 @@ public class Audio {
             @Override
             public void run() {
                 try {
-                    if (clip != null) {
-                        clip.stop();
-                        clip.close();
+                    if (clip2 != null) {
+                        clip2.stop();
+                        clip2.close();
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -139,6 +185,8 @@ public class Audio {
         back.setBackground(null);
         soundOn.setStyle("-fx-font: 24 arial;");
         soundOff.setStyle("-fx-font: 24 arial;");
+        volume.setStyle("-fx-font: 28 arial;");
+
 
 
         back.setStyle("-fx-font: 24 arial;");
@@ -153,15 +201,19 @@ public class Audio {
 
         border.setCenter(vbox);
 
+        if(clip2.isActive())
+            soundOn.setSelected(true);
+        else if(!clip2.isActive())
+            soundOff.setSelected(true);
+
         _title.setRoot(border);
 
         toggle.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
             public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
-                if(soundOn.isSelected())
-                {
-                    Audio.musicLoop("src/Audio/titleScreen.wav");
-                }
+                  if(soundOn.isSelected()) {
+                      Audio.musicLoop("src/Audio/titleScreen.wav");
+                  }
                 else if(soundOff.isSelected())
                 {
                     Audio.stopPlay();

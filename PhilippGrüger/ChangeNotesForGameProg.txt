@@ -1,6 +1,7 @@
 Changelog:
 titlescreen.java:
 -stage sizes
+-scene sizes
 Audio.java:
 -Changelistener -> clip.isActive()
 -Audio -> if(clip.isActive())

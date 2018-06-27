@@ -72,11 +72,10 @@ class Visuals {
 
 	public Visuals(BorderPane _oldBorder, Stage _stage, Scene _title) {
 
-		final BorderPane border2 = new BorderPane();
+
 		BorderPane border = new BorderPane();
 
 		border.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
-		border2.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
 
 		Label l_gameName = new Label("NameEinesGames");
 
@@ -84,10 +83,7 @@ class Visuals {
 		border.setTop(l_gameName);
 		border.setAlignment(l_gameName, Pos.CENTER);
 		border.setMargin(l_gameName, new Insets(50,10,10,0));
-		border2.setTop(l_gameName);
-		border2.setAlignment(l_gameName, Pos.CENTER);
-		border2.setMargin(l_gameName, new Insets(50,10,10,0));
-		_stage.setResizable(true);
+		_stage.setResizable(false);
 
 
 		VBox vbox = new VBox();
@@ -119,14 +115,19 @@ class Visuals {
 		vbox.setMargin(bigSize, new Insets(0,10,10,10));
 		vbox.setMargin(back, new Insets(0,10,10,0));
 		border.setCenter(vbox);
-		border2.setCenter(vbox);
 
 
 		/*mediumScene = new Scene(border,1006,778);
 		bigScene = new Scene(border,1200,810);*/
 
-		_title.setRoot(border);
+		if(_stage.getHeight() == 628 && _stage.getWidth() == 806)
+			smallSize.setSelected(true);
+		else if (_stage.getHeight() == 778 && _stage.getWidth() == 1006)
+			mediumSize.setSelected(true);
+		else if (_stage.getHeight() == 810 && _stage.getWidth() == 1200)
+			bigSize.setSelected(true);
 
+		_title.setRoot(border);
 
 		toggle.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
 			@Override
@@ -135,23 +136,26 @@ class Visuals {
 					_stage.setWidth(806);
 					_stage.setHeight(628);
 					_stage.setResizable(false);
+					System.out.println("W " +_title.getWidth() + "H " + _title.getHeight());
+					System.out.println("W " +_stage.getWidth() + "H " + _stage.getHeight());
 
-					//_stage.setScene(new Scene(border2,806,628));
 				}
 				else if (mediumSize.isSelected()) {
 					_stage.setWidth(1006);
 					_stage.setHeight(778);
 					_stage.setResizable(false);
 
-					//_stage.setScene(new Scene(border2,1006,775));
+					System.out.println("W " +_title.getWidth() + "H " + _title.getHeight());
+					System.out.println("W " +_stage.getWidth() + "H " + _stage.getHeight());
 
 				}
 				else if (bigSize.isSelected()) {
 					_stage.setWidth(1200);
 					_stage.setHeight(810);
 					_stage.setResizable(false);
+					System.out.println("W " +_title.getWidth() + "H " + _title.getHeight());
+					System.out.println("W " +_stage.getWidth() + "H " + _stage.getHeight());
 
-					//_stage.setScene(new Scene(border2,1200,810));
 				}
 			}
 		});

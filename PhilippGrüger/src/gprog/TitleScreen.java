@@ -83,9 +83,9 @@ public class TitleScreen extends Application{
 		
 		stage.setOnCloseRequest(e -> System.exit(0));
 		
-		stage.setMinHeight(500);
-		stage.setMinWidth(500);
-	    stage.setTitle("Name des Spiels");
+		stage.setHeight(628);
+		stage.setWidth(806);
+		stage.setTitle("Name des Spiels");
 	    stage.setScene(scene);
 		stage.show();
 	}
@@ -139,7 +139,7 @@ public class TitleScreen extends Application{
 		//
 		
 		//Button
-		Button b_zurueck = new Button("Zurück");
+		Button b_zurueck = new Button("Zurï¿½ck");
 		//
 		
 		//EventHandler
@@ -149,15 +149,15 @@ public class TitleScreen extends Application{
 		        	final Save save = loadSave(new_val);
 		        	if (save != null) {
 		        		Audio.stopPlay();
-		        		ButtonType bt_del = new ButtonType("Löschen", ButtonBar.ButtonData.OK_DONE);
+		        		ButtonType bt_del = new ButtonType("Lï¿½schen", ButtonBar.ButtonData.OK_DONE);
 		        		ButtonType bt_load = new ButtonType("Laden", ButtonBar.ButtonData.OK_DONE);
-		        		Alert alert = new Alert(AlertType.NONE, "Laden oder Löschen?", bt_load, bt_del,ButtonType.CANCEL);
+		        		Alert alert = new Alert(AlertType.NONE, "Laden oder Lï¿½schen?", bt_load, bt_del,ButtonType.CANCEL);
 		        		alert.showAndWait().ifPresent(response -> {
 		        			if (response == bt_load) {
 		        				new Control(stage, save);
 							}
 		        			else if(response == bt_del){
-		        				Alert lalert = new Alert(AlertType.WARNING, "Wirklich löschen?", ButtonType.OK, ButtonType.CANCEL);
+		        				Alert lalert = new Alert(AlertType.WARNING, "Wirklich lï¿½schen?", ButtonType.OK, ButtonType.CANCEL);
 		        				lalert.showAndWait();
 		        				if (lalert.getResult() == ButtonType.OK) {
 		        					try {
@@ -166,11 +166,11 @@ public class TitleScreen extends Application{
 			        						f.delete();
 			        					}
 			        					else{
-			        						Alert walert = new Alert(AlertType.ERROR, "Fehler beim löschen!", ButtonType.OK, ButtonType.CANCEL);
+			        						Alert walert = new Alert(AlertType.ERROR, "Fehler beim lï¿½schen!", ButtonType.OK, ButtonType.CANCEL);
 			        						walert.showAndWait();
 			        					}
 			        				} catch (Exception e) {
-			        					Alert walert = new Alert(AlertType.ERROR, "Fehler beim löschen!", ButtonType.OK, ButtonType.CANCEL);
+			        					Alert walert = new Alert(AlertType.ERROR, "Fehler beim lï¿½schen!", ButtonType.OK, ButtonType.CANCEL);
 			        					walert.showAndWait();
 			        					loadGame(stage, scene, bpOld);
 			        				}

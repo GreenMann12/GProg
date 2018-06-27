@@ -398,7 +398,15 @@ public class World{
                 			int i = ran.nextInt(3);
 							if(map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.Sand.class)
 								Audio.music("src/Audio/sand"+i+".wav");
+							else if(map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.Diamond.class)
+								Audio.music("src/Audio/stone"+i+".wav");
 							else if(map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.Stone.class)
+								Audio.music("src/Audio/stone"+i+".wav");
+							else if(map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.SilverOre.class)
+								Audio.music("src/Audio/stone"+i+".wav");
+							else if(map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.IronOre.class)
+								Audio.music("src/Audio/stone"+i+".wav");
+							else if(map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.CooperOre.class)
 								Audio.music("src/Audio/stone"+i+".wav");
 							else if(map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.WaterSurface.class)
 								Audio.music("src/Audio/watersplash.wav");
@@ -427,7 +435,15 @@ public class World{
 							int i = ran.nextInt(3);
 							if(map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.Sand.class)
 								Audio.music("src/Audio/sand"+i+".wav");
+							else if(map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.Diamond.class)
+								Audio.music("src/Audio/stone"+i+".wav");
 							else if(map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.Stone.class)
+								Audio.music("src/Audio/stone"+i+".wav");
+							else if(map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.SilverOre.class)
+								Audio.music("src/Audio/stone"+i+".wav");
+							else if(map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.IronOre.class)
+								Audio.music("src/Audio/stone"+i+".wav");
+							else if(map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.CooperOre.class)
 								Audio.music("src/Audio/stone"+i+".wav");
 							else if(map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.WaterSurface.class)
 								Audio.music("src/Audio/watersplash.wav");
@@ -528,7 +544,7 @@ public class World{
 				if (event.getCode().toString().equals("SPACE")) {
 					hero.setyVel(0);
 
-					Audio.music("src/Audio/jump.wav");
+					//Audio.music("src/Audio/jump.wav");
 
 				}
 				if (event.getCode().toString().equals("A")) {
