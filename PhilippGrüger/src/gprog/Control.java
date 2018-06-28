@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Random;
 
 import gprog.Items.Item;
 import javafx.scene.control.Alert;
@@ -127,12 +128,8 @@ public class Control {
 	
 	
 	//////Monster erstellen//////////////////////////////////////////////////////////////////
-	public Monster[] createMonster(){
-		Monster[] monster = new Monster[3];
-		for (int i = 0; i < monster.length; i++) {
-			monster[i] = new Monster(100,100);
-		}
-		return monster;
+	public Monster createMonster(int x, int y){
+		return new Monster(x,y, world);
 	}
 	
 	///////Inventar Position//////////////////////////////////////////////////////////////

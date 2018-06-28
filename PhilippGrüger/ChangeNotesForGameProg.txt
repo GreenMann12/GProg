@@ -1,0 +1,27 @@
+Changelog:
+titlescreen.java:
+-stage sizes
+-scene sizes
+Funktioniert aber trotzdem nicht >_<
+
+Audio.java:
+-Audio -> if(clip.isActive())
+soundOn.setSelected(true);...
+-slider2 halbwegs zum laufen gebracht :
+in Floatcontrol in Audio.musicloop() und in Audio.music()
+Visuals.java
+-if(_stage.getHeight() == ....) (kurz vor dem toggle Listener)
+
+World.java:
+Walking left("A")
+-added Sounds of walking(Diamond,Gold,Iron,Copper)
+Walking right("D")
+-added Sound of walking(Diamond,Gold,Iron,Copper)
+Placing block
+-added sound of placing block
+Adding block to inventory
+-added sound of collection block
+Attack right
+-added sounds of sword sway, sword hit zombie, zombie killed
+Attack left
+-added sounds of sword sway, sword hit zombie, zombie killed
