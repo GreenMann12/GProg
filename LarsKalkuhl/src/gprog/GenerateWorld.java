@@ -30,7 +30,7 @@ public class GenerateWorld {
         width = splitseed(seed);
         map = new int[width][heigth];
 
-        System.out.println(width + " " + heigth);
+        //System.out.println(width + " " + heigth);
 
         World.width = width;
 

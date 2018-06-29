@@ -24,13 +24,13 @@ public class Control {
 	
 	public Control(Stage stage, String name, String seed){
 		worldName = name;
-		world = new World(stage, this, null);
+		world = new World(stage, this, null, seed);
 	}
 	
 	public Control(Stage stage, Save save){
 		savefile = save;
 		worldName = savefile.getgameName();
-		world = new World(stage, this, savefile);
+		world = new World(stage, this, savefile, "");
 	}
 	
 	public ItemStack[] getInventory(){

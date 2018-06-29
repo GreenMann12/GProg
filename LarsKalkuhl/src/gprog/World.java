@@ -5,6 +5,8 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.sound.sampled.Clip;
+
 import com.sun.javafx.image.impl.ByteIndexed.Getter;
 
 import gprog.Items.Air;
@@ -58,13 +60,14 @@ public class World{
 	boolean attackright=false;
 	int attackCount = 0;
 	
-	Monster[] monsters = new Monster[6];
+	Monster[] monsters = new Monster[4];
 	private Robot robot;
 	private Scene worldScene;
 	private boolean pushed = false;
 	
 	//Guter Alter Sounds//////
 	int inventorySound = 0;
+	Clip clip;
 	//////////////////////////
 	
 	public Item[][] map;
@@ -72,7 +75,7 @@ public class World{
 	public Monster[] monster;
 	private ItemStack inventory[] = new ItemStack[32];
 	
-	public World(Stage stage, Control control, Save savefile){
+	public World(Stage stage, Control control, Save savefile, String seed){
 		this.control = control;
 		try {
             robot = new Robot();
@@ -82,7 +85,7 @@ public class World{
 		loading(stage);
 		if (savefile == null) {
 			GenerateWorld generateWorld = new GenerateWorld();
-			map = generateWorld.createWorld("2349120492", heigth);
+			map = generateWorld.createWorld(seed, heigth);
 			hero = new GameCharacter(width/2, playerSpawn(width/2));
 		}
 		else {
@@ -91,7 +94,7 @@ public class World{
 			inventory = savefile.getInventory();
 			control.setInventory(inventory);
 		}
-		System.out.println(width);
+		//System.out.println(width);
 		showWorld(stage);
 	}
 	
@@ -118,7 +121,7 @@ public class World{
 		
 		///////Anzeige Thread/////////////////////////////////////////////////////
 		
-		MyAnimTimer animTimer = new MyAnimTimer(32) {
+		MyAnimTimer animTimer = new MyAnimTimer(34) {
 			
 			@Override
 			public void handle() {
@@ -131,13 +134,21 @@ public class World{
 				canvas.setWidth(scene.getWidth());
 				int x = (int) (xChar-(scene.getWidth()/30)); //vorher -400
 				int y = (int) (yChar-(scene.getHeight()/30)); //vorher -300
+				int xmax = width;
+				int ymax = heigth;
+				if (x + scene.getWidth() < width) {
+					xmax = x + (int)scene.getWidth();
+				}
+				if (y + scene.getHeight() < heigth) {
+					ymax = y + (int)scene.getHeight();
+				}
 				
 				//System.out.println(hero.getX());
 				//System.out.println("x: " + x + " y: " + y);
 				
-				for (int w = x; w < width; w++) {
+				for (int w = x; w < xmax; w++) {
 					koordY = 0;
-					for (int h = y; h < heigth; h++) {
+					for (int h = y; h < ymax; h++) {
 						if (map[w][h].getID() == 0 && dayTime == 0) {
 							gc.drawImage(draw.loadBlockTexture(0), koordX, koordY);
 						}
@@ -308,15 +319,15 @@ public class World{
 			public void run(){
 				while(true){
 					try {
-						Thread.sleep(10*1000);
+						Thread.sleep(8*60*1000);
 					} catch (InterruptedException e) {
 					}
 					if (dayTime == 0) {
 						dayTime = 1;
 						for (int i = 0; i < monsters.length; i++) {
 							if (monsters[i] == null) {
-								int x1 = random.nextInt(30) + (hero.getxCoord() + 20);
-								int x2 = random.nextInt(30) + (hero.getxCoord() - 50);
+								int x1 = random.nextInt(60) + (hero.getxCoord() + 30);
+								int x2 = random.nextInt(60) + (hero.getxCoord() - 90);
 								if (i % 2 == 0) {
 									monsters[i] = control.createMonster(x1, playerSpawn(x1));
 								}
@@ -395,8 +406,18 @@ public class World{
                 			int i = ran.nextInt(3);
 							if(map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.Sand.class)
 								Audio.music("src/Audio/sand"+i+".wav");
+							else if(map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.Diamond.class)
+								Audio.music("src/Audio/stone"+i+".wav");
 							else if(map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.Stone.class)
 								Audio.music("src/Audio/stone"+i+".wav");
+							else if(map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.SilverOre.class)
+								Audio.music("src/Audio/stone"+i+".wav");
+							else if(map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.IronOre.class)
+								Audio.music("src/Audio/stone"+i+".wav");
+							else if(map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.CooperOre.class)
+								Audio.music("src/Audio/stone"+i+".wav");
+							else if(map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.WaterSurface.class)
+								Audio.music("src/Audio/watersplash.wav");
 							else if (map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.Dirt.class)
 								Audio.music("src/Audio/grass"+i+".wav");
 							else if (map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.Water.class)
@@ -422,8 +443,18 @@ public class World{
 							int i = ran.nextInt(3);
 							if(map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.Sand.class)
 								Audio.music("src/Audio/sand"+i+".wav");
+							else if(map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.Diamond.class)
+								Audio.music("src/Audio/stone"+i+".wav");
 							else if(map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.Stone.class)
 								Audio.music("src/Audio/stone"+i+".wav");
+							else if(map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.SilverOre.class)
+								Audio.music("src/Audio/stone"+i+".wav");
+							else if(map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.IronOre.class)
+								Audio.music("src/Audio/stone"+i+".wav");
+							else if(map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.CooperOre.class)
+								Audio.music("src/Audio/stone"+i+".wav");
+							else if(map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.WaterSurface.class)
+								Audio.music("src/Audio/watersplash.wav");
 							else if (map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.Dirt.class)
 								Audio.music("src/Audio/grass"+i+".wav");
 							else if (map[hero.getxCoord()][hero.getyCoord()+3].getClass() == gprog.Items.Water.class)
@@ -551,15 +582,23 @@ public class World{
 						if (event.getSceneX() >= (int) (scene.getWidth()/30)*15) {
 							attackright = true;
 							attackCount = 0;
+							Random ran = new Random();
+							int ra = ran.nextInt(3);
+							Audio.music("src/Audio/sway"+ra+".wav");
 							for (int i = 0; i < monsters.length; i++) {
 								if (monsters[i] != null) {
 									if (monsters[i].getxCoord() >= hero.getxCoord() && monsters[i].getxCoord() <= hero.getxCoord() + 4) {
 										monsters[i].setHealth(monsters[i].getHealth() - 50);
+										Audio.music("src/Audio/hit1.wav");
+										if (checkColl(monsters[i].getxCoord()+3, monsters[i].getyCoord())) {
+											monsters[i].setxCoord(monsters[i].getxCoord()+3);
+										}
 										if (monsters[i].getHealth() <= 0) {
 											monsters[i].die();
+											Audio.music("src/Audio/die"+ra+".wav");
 											monsters[i] = null;
-											int x1 = random.nextInt(30) + (hero.getxCoord() + 20);
-											int x2 = random.nextInt(30) + (hero.getxCoord() - 50);
+											int x1 = random.nextInt(60) + (hero.getxCoord() + 30);
+											int x2 = random.nextInt(60) + (hero.getxCoord() - 90);
 											if (i % 2 == 0) {
 												monsters[i] = control.createMonster(x1, playerSpawn(x1));
 											}
@@ -574,15 +613,23 @@ public class World{
 						else{
 							attackleft = true;
 							attackCount = 0;
+							Random ran = new Random();
+							int ra2 = ran.nextInt(3);
+							Audio.music("src/Audio/sway"+ra2+".wav");
 							for (int i = 0; i < monsters.length; i++) {
 								if (monsters[i] != null) {
 									if (monsters[i].getxCoord() <= hero.getxCoord() && monsters[i].getxCoord() >= hero.getxCoord() - 3) {
 										monsters[i].setHealth(monsters[i].getHealth() - 50);
+										Audio.music("src/Audio/hit1.wav");
+										if (checkColl(monsters[i].getxCoord()-4, monsters[i].getyCoord())) {
+											monsters[i].setxCoord(monsters[i].getxCoord()-4);
+										}
 										if (monsters[i].getHealth() <= 0) {
 											monsters[i].die();
+											Audio.music("src/Audio/die"+ra2+".wav");
 											monsters[i] = null;
-											int x1 = random.nextInt(30) + (hero.getxCoord() + 20);
-											int x2 = random.nextInt(30) + (hero.getxCoord() - 50);
+											int x1 = random.nextInt(60) + (hero.getxCoord() + 30);
+											int x2 = random.nextInt(60) + (hero.getxCoord() - 90);
 											if (i % 2 == 0) {
 												monsters[i] = control.createMonster(x1, playerSpawn(x1));
 											}
@@ -615,6 +662,7 @@ public class World{
 										control.inventoryAddItem(map[x][y]);
 										map[x][y] = new Air();
 										inventory = control.getInventory();
+										Audio.music("src/Audio/collect2.wav");
 										//System.out.println((int) (event.getSceneX()) + "  und  " + (int) (event.getSceneY()));
 										//System.out.println(x+ "  und  " + y);
 										//System.out.println(hero.getxCoord()+ "  und  " + hero.getyCoord());
@@ -679,6 +727,7 @@ public class World{
 					inventory = control.getInventory();
 					if (inventory[inventoryPos].getID() != 0 && map[x][y].getID() == 0 && inventory[inventoryPos].getID() < draw.getBlock() && control.checkMinePos(x, y, hero.getxCoord(), hero.getyCoord())) {
 						map[x][y] = control.inventoryRemoveItem(inventoryPos);
+						Audio.music("src/Audio/placeblock.wav");
 					}
 				}
 			}
