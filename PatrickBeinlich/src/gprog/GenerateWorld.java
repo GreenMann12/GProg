@@ -58,6 +58,19 @@ public class GenerateWorld {
         // place small puddles
         placeRandomlyWater();
 
+
+        for (int y = 0; y < World.heigth; y++){
+            for (int x = 0; x < World.width; x++){
+                System.out.print(map[x][y]);
+                if (map[x][y] < 10){
+                    System.out.print("  ");
+                } else {
+                    System.out.print(" ");
+                }
+            }
+            System.out.print("\n");
+        }
+
         return convertMap(map);
     }                                                         // generates the World depending on the seed
 
